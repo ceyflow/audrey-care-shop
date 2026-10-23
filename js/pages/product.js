@@ -30,12 +30,12 @@
         '<button class="zoom-btn" id="zoomBtn" aria-label="Zoom image">' + ZOOM + '</button></div>' +
         (views.length > 1 ? '<div class="thumbs">' + thumbs + '</div>' : '') + '</div>' +
       '<div class="pdp-info">' +
-        '<h1 class="pdp-title">' + AC.esc(p.name) + ' ' + AC.esc(f.name) + '</h1>' +
-        '<div class="pdp-price" id="price"></div>' +
-        (p.variants.length > 1 ? '<div class="opts" id="sizes" role="radiogroup" aria-label="Size"></div>' : '<div class="opts"><span class="opt" aria-checked="true" role="radio">' + AC.esc(sel.label) + '</span></div>') +
-        (siblings.length > 1 ? '<div><span class="field-label">Fragrance</span><div class="opts scent-opts">' +
+        '<h1 class="pdp-title" data-nocms>' + AC.esc(p.name) + ' ' + AC.esc(f.name) + '</h1>' +
+        '<div class="pdp-price" id="price" data-nocms></div>' +
+        (p.variants.length > 1 ? '<div class="opts" data-nocms id="sizes" role="radiogroup" aria-label="Size"></div>' : '<div class="opts"><span class="opt" aria-checked="true" role="radio">' + AC.esc(sel.label) + '</span></div>') +
+        (siblings.length > 1 ? '<div><span class="field-label">Fragrance</span><div class="opts scent-opts" data-nocms>' +
           siblings.map(function (s) { return '<a class="opt" role="radio" aria-checked="' + (s.id === p.id) + '" href="product.html?id=' + s.id + '"><span class="dot" style="background:' + s.frag.color + ';margin:0"></span>' + AC.esc(s.frag.name) + '</a>'; }).join('') + '</div></div>' : '') +
-        '<p class="pdp-desc">' + AC.esc(p.description || p.tagline || '') + '</p>' +
+        '<p class="pdp-desc" data-nocms>' + AC.esc(p.description || p.tagline || '') + '</p>' +
         '<div><div class="tabs" role="tablist" aria-label="How to buy"><button role="tab" id="tabOnline" aria-selected="true" aria-controls="panelOnline" data-tab="online">Online</button><button role="tab" id="tabBulk" aria-selected="false" aria-controls="panelBulk" data-tab="bulk">Bulk orders</button></div>' +
           '<div class="tab-panel" id="panelOnline" role="tabpanel" aria-labelledby="tabOnline">' +
             '<div class="buy-row"><div class="qty" aria-label="Quantity"><button id="qMinus" aria-label="Decrease quantity">' + I.minus + '</button><output id="qVal">1</output><button id="qPlus" aria-label="Increase quantity">' + I.plus + '</button></div>' +
@@ -46,7 +46,7 @@
             '<p class="muted" style="margin-bottom:18px">Ordering for a hotel, spa, restaurant or business? We supply ' + AC.esc(p.kindObj.name.toLowerCase()) + ' in 5 L cans, in the fragrance you choose.</p>' +
             '<a class="btn btn--block" href="bulk.html#enquiry">Request a quote</a></div></div>' +
         '<div>' +
-          (p.how_to_use ? '<details class="acc"><summary>How to use ' + I.plus + '</summary><div class="acc-body">' + AC.esc(p.how_to_use) + '</div></details>' : '') +
+          (p.how_to_use ? '<details class="acc"><summary>How to use ' + I.plus + '</summary><div class="acc-body" data-nocms>' + AC.esc(p.how_to_use) + '</div></details>' : '') +
           '<details class="acc"><summary>Ingredients ' + I.plus + '</summary><div class="acc-body">The full ingredient list is printed on the pack.</div></details>' +
           '<details class="acc"><summary>Delivery ' + I.plus + '</summary><div class="acc-body">Delivery across Sri Lanka, ' + AC.money(AC.settings.shipping_flat) + ' per order, free over ' + AC.money(AC.settings.free_over) + '. See <a href="policies.html#delivery" style="text-decoration:underline">delivery details</a>.</div></details>' +
         '</div>' +

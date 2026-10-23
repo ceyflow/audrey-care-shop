@@ -104,8 +104,22 @@
   }
 
   function loadCatalog() {
-    var local = prepare(JSON.parse(JSON.stringify(D.products)));
-    if (!AC.configured) { AC.products = local; return Promise.resolve(); }
+    /* Demo mode: products and settings changed in the admin dashboard live in this browser. */
+    var demo = AC.configured ? null : AC.json('ac_demo_products', null);
+    var base = Array.isArray(demo) ? demo : D.products;
+    var local = prepare(JSON.parse(JSON.stringify(base)).filter(function (p) { return p.active !== false; }).map(function (p) {
+      p.variants = (p.variants || []).filter(function (v) { return v.active !== false; }); return p;
+    }).filter(function (p) { return p.variants.length; }));
+    if (!AC.configured) {
+      var ds = AC.json('ac_demo_settings', null);
+      if (ds) {
+        if (ds.shipping_flat != null) AC.settings.shipping_flat = Number(ds.shipping_flat);
+        if (ds.free_over != null) AC.settings.free_over = Number(ds.free_over);
+        if (ds.payments) AC.settings.payments = ds.payments;
+        if (ds.bank) AC.settings.bank = ds.bank;
+      }
+      AC.products = local; return Promise.resolve();
+    }
     return Promise.all([
       AC.rest('products?select=*,variants(*)&active=eq.true&order=sort.asc'),
       AC.rest('settings?select=key,value').catch(function () { return []; })
@@ -159,7 +173,7 @@
   AC.card = function (p) {
     var single = p.variants.length === 1;
     var first = p.variants.slice().sort(function (a, b) { return a.price - b.price; })[0];
-    return '<article class="pcard card"><a class="pcard-img" href="product.html?id=' + p.id + '" tabindex="-1" aria-hidden="true">' + AC.media(p, 0, { plain: true }) + AC.sizeBadge(first.label) + '</a>' +
+    return '<article class="pcard card" data-nocms><a class="pcard-img" href="product.html?id=' + p.id + '" tabindex="-1" aria-hidden="true">' + AC.media(p, 0, { plain: true }) + AC.sizeBadge(first.label) + '</a>' +
       '<div class="pcard-body"><div class="pcard-kind">' + AC.esc(p.kindObj.name) + ' · ' + AC.esc(p.frag.name) + '</div>' +
       '<h3 class="pcard-title"><a href="product.html?id=' + p.id + '">' + AC.esc(p.name) + ' ' + AC.esc(p.frag.name) + '</a></h3>' +
       '<div class="pcard-price">' + (p.variants.length > 1 ? 'From ' : '') + AC.money(p.from) + '</div>' +
@@ -243,7 +257,7 @@
       $('#drawerFoot').innerHTML = ''; return;
     }
     $('#drawerBody').innerHTML = lines.map(function (l) {
-      return '<div class="line"><a class="line-img" href="product.html?id=' + l.p.id + '">' + AC.media(l.p, 0) + '</a><div class="line-info">' +
+      return '<div class="line" data-nocms><a class="line-img" href="product.html?id=' + l.p.id + '">' + AC.media(l.p, 0) + '</a><div class="line-info">' +
         '<b>' + AC.esc(l.p.name) + '</b><span>' + AC.esc(l.p.frag.name) + ' · ' + AC.esc(l.v.label) + '</span>' +
         '<div class="line-row"><div class="qty"><button data-dec="' + l.v.id + '" aria-label="Decrease quantity">' + I.minus + '</button><output>' + l.q + '</output><button data-inc="' + l.v.id + '" aria-label="Increase quantity">' + I.plus + '</button></div>' +
         '<b>' + AC.money(l.total) + '</b></div><button class="line-remove" data-rm="' + l.v.id + '" style="justify-self:start;margin-top:6px">Remove</button></div></div>';

@@ -53,7 +53,7 @@
     [['Bank', b.bank], ['Account name', b.account_name], ['Account number', b.account_no], ['Branch', b.branch]].forEach(function (r) {
       if (r[1]) rows += '<dt>' + r[0] + '</dt><dd>' + AC.esc(r[1]) + (r[0] === 'Account number' ? '<button class="copy-btn" data-copy="' + AC.esc(r[1]) + '">Copy</button>' : '') + '</dd>';
     });
-    var details = rows ? '<dl class="kv">' + rows + '<dt>Amount</dt><dd>' + total + '</dd><dt>Reference</dt><dd>' + AC.esc(o.order_no) + '<button class="copy-btn" data-copy="' + AC.esc(o.order_no) + '">Copy</button></dd></dl>' :
+    var details = rows ? '<dl class="kv" data-nocms>' + rows + '<dt>Amount</dt><dd>' + total + '</dd><dt>Reference</dt><dd>' + AC.esc(o.order_no) + '<button class="copy-btn" data-copy="' + AC.esc(o.order_no) + '">Copy</button></dd></dl>' :
       '<p class="muted">We’ll send our bank details to your mobile number shortly. Please use <b>' + AC.esc(o.order_no) + '</b> as the payment reference.</p>';
     var slip;
     if (s === 'slip_uploaded') slip = '<div class="notice">We’ve received your payment slip and will confirm your payment shortly.</div>';
@@ -66,18 +66,18 @@
     var step = STEP_OF[o.status], cancelled = o.status === 'cancelled';
     var first = (o.customer_name || '').split(' ')[0];
     var head = isNew ?
-      '<div class="center" style="display:grid;gap:14px;justify-items:center"><div class="check">' + I.check + '</div><h1 class="h2">Thank you' + (first ? ', <em>' + AC.esc(first) + '</em>' : '') + '</h1><p class="lead">Your order <b>' + AC.esc(o.order_no) + '</b> has been placed. We’ve saved the details below.</p></div>' :
-      '<div class="center"><span class="kicker serif-i" style="font-size:24px;color:var(--green-600)">Order</span><h1 class="h2">' + AC.esc(o.order_no) + '</h1><p class="muted">Placed ' + new Date(o.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p></div>';
+      '<div class="center" data-nocms style="display:grid;gap:14px;justify-items:center"><div class="check">' + I.check + '</div><h1 class="h2">Thank you' + (first ? ', <em>' + AC.esc(first) + '</em>' : '') + '</h1><p class="lead">Your order <b>' + AC.esc(o.order_no) + '</b> has been placed. We’ve saved the details below.</p></div>' :
+      '<div class="center" data-nocms><span class="kicker serif-i" style="font-size:24px;color:var(--green-600)">Order</span><h1 class="h2">' + AC.esc(o.order_no) + '</h1><p class="muted">Placed ' + new Date(o.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p></div>';
 
     var steps = cancelled ? '<div class="notice notice--err">This order has been cancelled.</div>' :
       '<div class="steps" aria-label="Order progress">' + STEPS.map(function (s, i) { return '<div class="step' + (i < step ? ' done' : i === step ? ' current' : '') + '"><i></i>' + s + '</div>'; }).join('') + '</div>';
 
     var items = o.items.map(function (it) {
-      return '<div class="row"><span>' + AC.esc(it.name) + ' <span class="muted">· ' + AC.esc(it.variant_label) + ' × ' + it.qty + '</span></span><span>' + AC.money(it.unit_price_lkr * it.qty) + '</span></div>';
+      return '<div class="row" data-nocms><span>' + AC.esc(it.name) + ' <span class="muted">· ' + AC.esc(it.variant_label) + ' × ' + it.qty + '</span></span><span>' + AC.money(it.unit_price_lkr * it.qty) + '</span></div>';
     }).join('');
 
-    var track = o.tracking_no ? '<div class="panel"><h3>Delivery tracking</h3><dl class="kv"><dt>Courier</dt><dd>' + AC.esc(o.courier || 'Courier') + '</dd><dt>Tracking number</dt><dd>' + AC.esc(o.tracking_no) + '</dd></dl></div>' : '';
-    var addr = o.full ? '<div class="panel"><h3>Delivering to</h3><dl class="kv"><dt>Name</dt><dd>' + AC.esc(o.customer_name) + '</dd><dt>Mobile</dt><dd>' + AC.esc(o.phone) + '</dd><dt>Address</dt><dd>' + AC.esc(o.address) + '</dd></dl></div>' : '';
+    var track = o.tracking_no ? '<div class="panel"><h3>Delivery tracking</h3><dl class="kv" data-nocms><dt>Courier</dt><dd>' + AC.esc(o.courier || 'Courier') + '</dd><dt>Tracking number</dt><dd>' + AC.esc(o.tracking_no) + '</dd></dl></div>' : '';
+    var addr = o.full ? '<div class="panel" data-nocms><h3>Delivering to</h3><dl class="kv"><dt>Name</dt><dd>' + AC.esc(o.customer_name) + '</dd><dt>Mobile</dt><dd>' + AC.esc(o.phone) + '</dd><dt>Address</dt><dd>' + AC.esc(o.address) + '</dd></dl></div>' : '';
 
     root.innerHTML = '<div class="order-card">' +
       (demo ? '<div class="notice notice--warn"><b>Demo mode.</b> This order is only saved in this browser — no payment was taken and nothing was sent to the shop.</div>' : '') +

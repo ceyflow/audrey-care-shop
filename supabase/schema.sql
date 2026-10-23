@@ -196,6 +196,67 @@ drop policy if exists "Anyone can upload payment slips" on storage.objects;
 create policy "Anyone can upload payment slips" on storage.objects
   for insert to anon, authenticated with check (bucket_id = 'payment-slips');
 
+
+-- ---------------------------------------------------------------------------
+-- Admin dashboard (admin.html): who may edit, plus editable site content
+-- ---------------------------------------------------------------------------
+create table if not exists public.admins (
+  id         uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+alter table public.admins enable row level security;
+
+create or replace function public.is_admin()
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.admins where id = auth.uid());
+$$;
+grant execute on function public.is_admin() to anon, authenticated;
+
+drop policy if exists "Admins can see themselves" on public.admins;
+create policy "Admins can see themselves" on public.admins for select to authenticated using (id = auth.uid());
+
+-- Texts, logo, photos and contact details shown on the website: one row per editable item.
+create table if not exists public.site_content (
+  key        text primary key,          -- e.g. 'hero1.title', 'img.banner', 'contact.phone'
+  value      text not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.site_content enable row level security;
+drop policy if exists "Public can read site content" on public.site_content;
+create policy "Public can read site content" on public.site_content for select to anon, authenticated using (true);
+drop policy if exists "Admins write site content" on public.site_content;
+create policy "Admins write site content" on public.site_content for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- A private note you can keep on each order (never shown to the customer).
+alter table public.orders add column if not exists admin_note text;
+
+-- Admins can manage everything the website only reads (products, prices, settings) and see all orders.
+do $$
+declare t text;
+begin
+  foreach t in array array['products','variants','settings','orders','order_items','form_submissions'] loop
+    execute format('drop policy if exists "Admins manage %1$s" on public.%1$I', t);
+    execute format('create policy "Admins manage %1$s" on public.%1$I for all to authenticated using (public.is_admin()) with check (public.is_admin())', t);
+  end loop;
+end $$;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+
+-- Public bucket for logo, site photos and product photos (only admins can upload).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('site-images', 'site-images', true, 5242880, array['image/jpeg','image/png','image/webp','image/svg+xml'])
+on conflict (id) do nothing;
+
+drop policy if exists "Admins upload site images" on storage.objects;
+create policy "Admins upload site images" on storage.objects for insert to authenticated with check (bucket_id = 'site-images' and public.is_admin());
+drop policy if exists "Admins update site images" on storage.objects;
+create policy "Admins update site images" on storage.objects for update to authenticated using (bucket_id = 'site-images' and public.is_admin());
+drop policy if exists "Admins delete site images" on storage.objects;
+create policy "Admins delete site images" on storage.objects for delete to authenticated using (bucket_id = 'site-images' and public.is_admin());
+-- Admins can open bank-transfer slips.
+drop policy if exists "Admins read payment slips" on storage.objects;
+create policy "Admins read payment slips" on storage.objects for select to authenticated using (bucket_id = 'payment-slips' and public.is_admin());
+
 -- ---------------------------------------------------------------------------
 -- Default settings (edit any time in Dashboard → Table editor → settings)
 -- ---------------------------------------------------------------------------

@@ -10,8 +10,13 @@ There is no build step. The site is plain HTML, CSS and JavaScript, so any stati
 index.html  shop.html  product.html  checkout.html  order.html
 bulk.html   about.html  contact.html  policies.html  404.html
 advice.html (tips list + articles)   quiz.html (find-your-fragrance quiz)
+admin.html               YOUR DASHBOARD: orders, products, pages, photos, colours, settings, messages
 css/styles.css           design system (colours, type, animation)
 js/config.js             ← your settings (Supabase keys, contact details, bank details)
+js/content.js            applies what you change in the dashboard (texts, photos, colours) to every page
+js/editor.js             the click-to-edit mode on the pages (opened from the dashboard)
+js/cms-store.js          sign-in, saving and photo uploads for the dashboard
+js/pages/admin.js        the dashboard itself
 js/data.js               sample catalogue + advice articles (placeholder content)
 js/art.js                generated placeholder product artwork
 js/layout.js             header, mega menu and footer (edit navigation here)
@@ -24,34 +29,32 @@ supabase/functions/      the 3 server functions (place-order, submit-form, payhe
 
 ## Edit the site yourself (no coding needed)
 
-Everything is a plain file in this repo. To change something: open the file on GitHub, click the pencil
-icon (✏), edit, then **Commit changes**. The live site updates about a minute later.
+Open **`yourwebsite/admin.html`** (for the preview: `http://localhost:8000/admin.html`). This is your private
+dashboard. Sign in with the owner account you create in step 2 → A (step 5) (until then it runs in **demo mode** so you can
+try everything; demo changes only exist in your own browser).
 
-| To change… | Edit this file |
+| I want to… | Go to |
 |---|---|
-| **Logo** | upload the image into the `assets` folder, then put its path in `LOGO` in `js/config.js` |
-| **Photos** (hero slides, banner, tiles, pictures on the home and story pages) | upload into `assets`, then fill the `IMAGES` list in `js/config.js` |
-| **Products**: names, prices, descriptions, product photos | `js/data.js` |
-| **Words on the home page** (hero slides, banner, sections) | `index.html` |
-| **Words on other pages** | `about.html`, `bulk.html`, `contact.html`, `policies.html` |
-| **Advice articles** | `js/data.js`, under `articles` |
-| **Phone, WhatsApp, email, address, delivery fee, bank details** | `js/config.js` |
-| **Colours** | the top of `css/styles.css` (`--brand` is the main green) |
-| **Menu and footer links** | `js/layout.js` |
+| **Change any wording** on any page, down to a button label or a footer line | **Edit pages** → pick the page → *click the text and type*. Press Enter to save. |
+| **Replace any picture** (hero slides, banner, tiles, story page) or the **logo** | **Edit pages**: click the picture. Or **Photos & logo** to see every picture slot in one place. |
+| **Add or change products**, sizes, prices, “was” prices, stock, photos, labels (New / Bestseller) | **Products** (turn a product off to hide it; ▲▼ changes the order) |
+| **Change colours** (main colour, accent, text, backgrounds) | **Colours** |
+| **Phone, WhatsApp, email, address**, delivery charge, free-delivery amount, which payment methods to offer, **bank details** | **Settings** |
+| **See and manage orders**: mark confirmed / packed / dispatched, add courier + tracking number (customers see it), open bank-transfer slips, message the customer on WhatsApp, download a CSV | **Orders** |
+| **Read bulk enquiries, contact messages and newsletter sign-ups**; mark done; download a CSV | **Messages** |
+| **Undo** a wording change | **Edit pages** → “Texts you have changed” → *Back to original* |
 
-**Uploading a picture:** open the `assets` folder in the repo, click **Add file → Upload files**, drag the picture in,
-then **Commit changes**. Use short names without spaces (`hero-1.jpg`). Then put the path in `js/config.js`,
-for example `hero1: 'assets/hero-1.jpg'`.
+Good to know:
 
-**Picture sizes that fit best** (width × height; JPG or WebP; keep each under about 300 KB):
-hero slides 1000 × 800 · banner 1600 × 640 · bulk block 900 × 600 · home split picture 640 × 640 ·
-story page picture 520 × 650 · category tiles 340 × 220 · logo: transparent PNG or SVG at least 200 px tall.
+- Changing a wording changes it **everywhere that exact wording appears** (e.g. a button used on several pages).
+- Put `*stars*` around words to make them the soft italic accent (in the dashboard list), or use the **Accent** button while editing on the page.
+- Product names, prices and descriptions are edited under **Products**, not on the page.
+- Pictures are shrunk automatically before upload, so the shop stays fast.
+- Not editable from the dashboard (ask a developer): the list of product **types** and **fragrances**, page titles
+  shown in the browser tab, hidden labels for screen readers, and short pop-up messages (like form errors).
 
-**Product photos:** one square picture per product (800 × 800, product centred on white). Upload to
-`assets/products/`, then in `js/data.js` set `images: ['assets/products/shampoo-lavender.jpg']` on that product.
-
-**Orders and customers** are not edited in these files. They live in the database once Supabase is connected
-(section 2 below), where you manage them in the Supabase dashboard.
+**Advanced / fallback:** the original wording and pictures still live in the files (`index.html`, `js/config.js`,
+`js/data.js`, …). Whatever you set in the dashboard is applied on top of them, so you can always return to the originals.
 
 ## 1. Preview it on your computer (2 minutes)
 
@@ -75,6 +78,18 @@ but orders and enquiries are only saved in your own browser (a yellow banner say
 4. Dashboard → **Project Settings → API**. Copy the **Project URL** and the **anon / publishable key**
    into `js/config.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`). The anon key is *meant* to be public. The
    security rules in `schema.sql` mean the website can only read the catalogue.
+5. **Create your owner account** (this is how you sign in to `admin.html`):
+   - Dashboard → **Authentication → Users → Add user → Create new user**. Enter your email and a strong password,
+     and tick **Auto Confirm User**.
+   - Dashboard → **Authentication → Sign In / Providers** (or *Providers → Email*): switch **off** “Allow new users to
+     sign up”, so nobody else can create an account.
+   - Dashboard → **SQL Editor** → New query → run this once (use your email):
+     ```sql
+     insert into public.admins (id) select id from auth.users where email = 'you@yourdomain.lk';
+     ```
+   Only accounts listed in `public.admins` can change anything; the database enforces this, not the web page.
+   To add a second person later, create their user and run the same line with their email.
+6. Open `https://yourwebsite/admin.html`, sign in, and look at **Overview → Getting started**.
 
 ### B. Deploy the server functions
 
@@ -136,16 +151,14 @@ to the repo root (`/`). Then add your custom domain in the host's settings and m
 
 ### E. Make it yours
 
-- **Contact details:** fill in `js/config.js`: `PHONE`, `EMAIL`, `ADDRESS`, `WHATSAPP_NUMBER`
-  (digits only, e.g. `94771234567`). Anything left empty is hidden. The WhatsApp chat bubble only appears if a
-  number is set.
-- **Bank details for transfers:** Supabase → `settings` → `bank` → edit the JSON
-  (`{"bank": "...", "account_name": "...", "account_no": "...", "branch": "..."}`).
-- **Delivery fee / free-delivery threshold:** `settings` → `shipping_flat_lkr` and `free_shipping_over_lkr`.
-- **Real products and photos:** see below.
-- **Copy:** replace the placeholder "Our story" (`about.html`) and review all wording.
-- **Policies:** `policies.html` is a **draft**. Review it (ideally with a lawyer) and edit to match how you
-  really operate.
+Everything here is done in the dashboard (`admin.html`):
+
+- **Logo and photos:** *Photos & logo*, or click a picture in *Edit pages*.
+- **Contact details, delivery fee, free-delivery amount, payment methods, bank details:** *Settings*.
+- **Real products and photos:** *Products* (replace or delete the 12 placeholder products).
+- **Wording:** *Edit pages*. Replace the placeholder “Our story” and review every page's wording.
+- **Policies:** `policies.html` is a **draft**. Open it in *Edit pages* and rewrite it (ideally with a lawyer) to match how
+  you really operate.
 
 ### F. Final checks before announcing
 
@@ -157,32 +170,38 @@ to the repo root (`/`). Then add your custom domain in the host's settings and m
 
 ## 3. Running the shop day to day
 
-Everything is in the Supabase dashboard → **Table editor**.
+Open `admin.html`. The **Overview** shows what needs attention (new orders, bank slips to check, messages).
 
 | I want to… | Where |
 |---|---|
-| See new orders | `orders` (newest first) + `order_items` |
-| Confirm a bank transfer | open the slip in **Storage → payment-slips → AC-1001/**, then set the order's `payment_status` to `paid` and `status` to `confirmed` |
-| Mark packed / dispatched / delivered | change `status` on the order. The customer's order page updates its progress bar |
-| Show a tracking number to the customer | fill `courier` and `tracking_no` on the order |
-| Cancel an order | set `status` to `cancelled` |
-| Read bulk enquiries, messages, newsletter sign-ups | `form_submissions` (tick `handled` as you go) |
-| Hide a product / mark out of stock | set `active` to false on the product or variant, or set the variant's `stock` to 0 (leave `stock` empty to not track it) |
-| Change a price | `variants.price_lkr` |
+| See new orders | **Orders** (newest first; the number on the menu counts new ones) |
+| Confirm a bank transfer | **Orders** → open the order → **Open payment slip** → set *Payment* to **Paid** and *Order progress* to **Confirmed** → Save |
+| Mark packed / dispatched / delivered | **Orders** → open the order → change *Order progress* → Save. The customer's order page updates its progress bar |
+| Show a tracking number to the customer | **Orders** → fill *Courier* and *Tracking number* → Save |
+| Tell the customer what happened | **Orders** → open the order → **Message on WhatsApp** (the text is written for you) |
+| Cancel an order | *Order progress* → **Cancelled** |
+| Read bulk enquiries, messages, sign-ups | **Messages** (mark each *done* as you go) |
+| Hide a product / mark a size out of stock | **Products** → switch it off, or set that size's *Stock* to 0 (leave empty to not track stock) |
+| Change a price | **Products** → Edit → *Sizes & prices* |
 
 Customers can follow their order at **Track my order** with their order number and mobile number. The
 private link shown after checkout also lets them upload a bank slip.
 
+> The Supabase dashboard (**Table editor**) still shows the same data if you ever want to look at it directly.
+
 ### Adding your real products
 
-1. **Photos:** put them in `assets/products/` (for example `shampoo-lavender.jpg`, 4:5 portrait works best).
-2. **Database:** in `products`, set `images` to `{assets/products/shampoo-lavender.jpg,assets/products/shampoo-lavender-2.jpg}`
-   and edit `name`, `tagline`, `description`, `how_to_use`. Add rows in `variants` for sizes and prices.
-3. **Offline copy:** keep `js/data.js` in step. It is the fallback if the database is unreachable and it defines the list of
-   product types and fragrances used by menus and filters. To add a **new fragrance or product type**, add it there
-   first (with a colour for fragrances), then use its `id` in the database.
-4. To reload the database from `js/data.js`, run `node scripts/make-seed.mjs` and run the resulting
-   `supabase/seed.sql`. This overwrites products with the same `id`.
+Use **Products → + Add a product** in the dashboard: name, fragrance, type, short line, description, how to use,
+photos (the first one is the main picture; a portrait 4:5 photo on a plain background works best) and one row per
+size with its price. To start from scratch, delete or hide the 12 placeholder products.
+
+A few developer-level notes:
+
+- `js/data.js` holds the *placeholder* catalogue, the lists of product **types** and **fragrances** used by menus and
+  filters, and the advice articles. It is also the fallback if the database is unreachable. To add a brand-new
+  fragrance or product type, add it there first (fragrances need a colour), then pick it in the dashboard.
+- To reload the database from `js/data.js`, run `node scripts/make-seed.mjs` and run the resulting
+  `supabase/seed.sql` (this overwrites products with the same `id`).
 
 ## 4. Changing the look
 
@@ -190,14 +209,14 @@ The design follows the structure and motion of a premium beauty storefront: a fi
 static two-tier header, a click-to-open mega menu, flat square buttons that invert on hover, and almost no
 animation (no scroll effects, no hover zoom; the hero swaps slides instantly and doesn't autoplay).
 
-- **Colours:** the `:root` block at the top of `css/styles.css`. `--brand` (deep green) is the main colour,
-  `--gold` is the accent under the open menu item.
+- **Colours:** the dashboard's **Colours** page (main colour, accent, text, soft background). Developers can also edit
+  the `:root` block at the top of `css/styles.css`; `--brand` (deep green) is the main colour, `--gold` the accent.
 - **Fonts:** Figtree (text, a close stand-in for the reference's paid typeface) and Fraunces (italic accents),
   both self-hosted in `assets/fonts/` (SIL Open Font License).
-- **Hero slides:** text in `index.html`; artwork in `js/art.js`. For real photography, replace the `data-art`
-  blocks with `<div class="art-clip"><img src="assets/hero-1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>`
-  (landscape, about 1000×800; the curved edge is applied automatically).
-- **Menu and footer:** `js/layout.js`.
+- **Hero slides:** click the wording or the picture in the dashboard's *Edit pages* (landscape, about 1000×800; the
+  curved edge is applied automatically). The built-in artwork lives in `js/art.js`.
+- **Menu and footer:** wording can be edited in *Edit pages* (use the **Menu** button in the editor bar to open the menu);
+  links and structure are in `js/layout.js`.
 - **Advice articles and quiz:** articles live in `js/data.js` (`articles`); the quiz is `js/pages/quiz.js`.
   The article text is **draft copy**: review and replace it.
 
@@ -211,11 +230,20 @@ animation (no scroll effects, no hover zoom; the hero swaps slides instantly and
 - Card details never touch this site. They are entered on PayHere, and payment confirmations are accepted only after
   verifying PayHere's signature and the amount.
 - Forms have a hidden spam trap, and orders are limited to 5 per phone number per hour.
+- **The dashboard is protected by the database, not by the web page.** Every change is checked against the
+  `public.admins` list on the server. The public key can only read; a signed-in account that is not on the list can
+  change nothing (tested against the real schema). The sign-in page itself is public but only works for your account;
+  keep sign-ups switched off (step 2 → A → 5) and use a strong password.
+- Pictures you upload go into a public bucket (`site-images`) that only owners can write to; bank slips stay in a
+  private bucket that only owners can read.
+- Wording you save is filtered so only simple formatting (italics, bold, line breaks, safe links) can be stored.
 
 ## 6. Not built yet (ideas for later)
 
-- An admin screen for orders (today you use the Supabase table editor).
+- Editing the lists of product **types**, **fragrances** and categories from the dashboard (they live in `js/data.js`).
+- Editing page titles for search engines, picture descriptions (alt text) and short pop-up messages.
 - Confirmation emails or SMS *to customers* (you receive the alerts; send.lk SMS could be added the same way as in your operations app).
+- Multiple owner roles (everyone on the `admins` list can do everything).
 - Customer accounts and wholesale price lists (bulk is enquiry-only for now).
 - Courier integration (CityPak waybills and live tracking).
 - Discount codes, product reviews, wishlists.

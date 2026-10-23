@@ -4,6 +4,8 @@
  */
 (function () {
   var C = window.AC_CONFIG, D = window.AC_DATA;
+  /* contact details and the shop name can be changed in the dashboard, so they are escaped wherever they are written into the page */
+  function e(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   var page = (document.body && document.body.getAttribute('data-page')) || document.documentElement.getAttribute('data-page') || '';
 
   function ic(path, extra) {
@@ -40,8 +42,8 @@
   window.AC_ICON = function (n) { return I[n] || ''; };
 
   function brand() {
-    if (C.LOGO) return '<a class="brand" href="index.html" aria-label="' + C.SITE_NAME + ' home"><img class="brand-img" src="' + String(C.LOGO).replace(/"/g, '&quot;') + '" alt="' + C.SITE_NAME + '"></a>';
-    return '<a class="brand" href="index.html" aria-label="' + C.SITE_NAME + ' home">' + I.logo +
+    if (C.LOGO) return '<a class="brand" data-slot="logo" href="index.html" aria-label="' + e(C.SITE_NAME) + ' home"><img class="brand-img" src="' + String(C.LOGO).replace(/"/g, '&quot;') + '" alt="' + e(C.SITE_NAME) + '"></a>';
+    return '<a class="brand" data-slot="logo" href="index.html" aria-label="' + e(C.SITE_NAME) + ' home">' + I.logo +
       '<span class="brand-name">Audrey Care<small>Gentle everyday care</small></span></a>';
   }
   var ARROW = I.arrow.replace('<svg', '<svg class="arr"');
@@ -71,9 +73,9 @@
   }).join('');
 
   var wa = C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">WhatsApp us ' + I.right + '</a>' : '';
-  var mnavFoot = (C.PHONE ? '<a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + C.PHONE + '</a>' : '') +
+  var mnavFoot = (C.PHONE ? '<a href="tel:' + e(C.PHONE.replace(/\s/g, '')) + '">' + e(C.PHONE) + '</a>' : '') +
     (C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '">Chat on WhatsApp</a>' : '') +
-    (C.EMAIL ? '<a href="mailto:' + C.EMAIL + '">' + C.EMAIL + '</a>' : '');
+    (C.EMAIL ? '<a href="mailto:' + e(C.EMAIL) + '">' + e(C.EMAIL) + '</a>' : '');
 
   var header =
     '<a class="skip" href="#main">Skip to content</a>' +
@@ -96,7 +98,7 @@
         '<div class="search" id="search" role="search"><form action="shop.html" method="get" autocomplete="off">' +
           '<input type="search" name="q" id="searchInput" placeholder="Type something here..." aria-label="Search products" aria-autocomplete="list" aria-controls="searchResults">' +
           '<button type="submit" aria-label="Search">' + I.search + '</button></form>' +
-          '<div class="search-results" id="searchResults" role="listbox"></div></div>' +
+          '<div class="search-results" id="searchResults" role="listbox" data-nocms></div></div>' +
         '<div style="display:flex;align-items:center">' +
           '<button class="icon-btn cart-btn" id="cartBtn" aria-label="Open bag">' + I.bag + '<span class="cart-count" id="cartCount">0</span></button>' +
           '<button class="icon-btn burger" id="burger" aria-label="Open main navigation menu" aria-expanded="false" aria-controls="mnav">' + I.menu + '</button>' +
@@ -127,9 +129,9 @@
 
   /* ---------- footer ---------- */
   var contactBits = [
-    C.ADDRESS ? '<li>' + C.ADDRESS + '</li>' : '',
-    C.PHONE ? '<li><a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + C.PHONE + '</a></li>' : '',
-    C.EMAIL ? '<li><a href="mailto:' + C.EMAIL + '">' + C.EMAIL + '</a></li>' : '',
+    C.ADDRESS ? '<li>' + e(C.ADDRESS) + '</li>' : '',
+    C.PHONE ? '<li><a href="tel:' + e(C.PHONE.replace(/\s/g, '')) + '">' + e(C.PHONE) + '</a></li>' : '',
+    C.EMAIL ? '<li><a href="mailto:' + e(C.EMAIL) + '">' + e(C.EMAIL) + '</a></li>' : '',
     C.WHATSAPP_NUMBER ? '<li><a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">WhatsApp</a></li>' : ''
   ].join('');
 
@@ -143,7 +145,7 @@
       '<div><h4>Company</h4><ul><li><a class="link-arrow" href="bulk.html">Bulk orders ' + ARROW + '</a></li><li><a href="about.html">Our story</a></li><li><a href="advice.html">Advice</a></li><li><a href="quiz.html">Quizzes</a></li><li><a href="contact.html">Contact us</a></li><li><a href="order.html">Track my order</a></li></ul></div>' +
       '<div><h4>Get in touch</h4><ul>' + (contactBits || '<li><a href="contact.html">Send us a message</a></li>') + '</ul></div>' +
     '</div>' +
-    '<div class="footer-bottom"><span>© ' + new Date().getFullYear() + ' ' + C.SITE_NAME + '. All rights reserved.</span>' +
+    '<div class="footer-bottom"><span>© ' + new Date().getFullYear() + ' ' + e(C.SITE_NAME) + '. All rights reserved.</span>' +
       '<nav aria-label="Legal"><a href="policies.html#delivery">Delivery</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a><a href="policies.html#terms">Terms</a></nav></div>' +
     '</div></footer>';
 })();
