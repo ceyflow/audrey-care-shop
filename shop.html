@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop — Audrey Care</title>
+<meta name="description" content="Shop Audrey Care shampoos, conditioners, shower gels, body lotions, hand wash, bubble bath and air fresheners.">
+<meta name="theme-color" content="#143d2c">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/figtree-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-page="shop">
+<script src="js/config.js"></script><script src="js/data.js"></script><script src="js/art.js"></script><script src="js/layout.js"></script>
+
+<main id="main">
+  <div class="wrap" style="padding-top:28px"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">›</span><span id="crumbNow">Products</span></nav></div>
+
+  <div class="wrap"><div class="cat-row" id="groupChips" role="group" aria-label="Category"></div></div>
+
+  <div class="wrap">
+    <section class="shop-intro">
+      <h1 class="page-title" id="shopTitle">All products</h1>
+      <div class="page-desc" id="shopLead"></div>
+    </section>
+
+    <div class="shop-layout">
+      <aside class="filters" id="filters" aria-label="Filters">
+        <h2>Filter by</h2>
+        <details class="fgroup" open><summary>Product type <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="fKinds"></div></details>
+        <details class="fgroup" open><summary>Fragrance <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="fScents"></div></details>
+        <details class="fgroup"><summary>Collection <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="fBadges"></div></details>
+      </aside>
+      <div>
+        <button class="btn btn--ghost btn--sm filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="filters">Filter by</button>
+        <div class="grid-head">
+          <span class="result-count" id="count" role="status"></span>
+          <div class="sort"><label for="sort">Sort by</label>
+            <select class="select" id="sort">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid" id="grid" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/pages/shop.js"></script>
+</body>
+</html>

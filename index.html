@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audrey Care — Gentle everyday care</title>
+<meta name="description" content="Gentle shampoos, shower gels, lotions and fragrances from Audrey Care. Delivered across Sri Lanka, and in bulk for hotels and spas.">
+<meta name="theme-color" content="#143d2c">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/figtree-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-page="home">
+<script src="js/config.js"></script><script src="js/data.js"></script><script src="js/art.js"></script><script src="js/layout.js"></script>
+
+<main id="main">
+
+  <!-- Hero: manual carousel, slides swap instantly -->
+  <section class="hero" id="hero" aria-roledescription="carousel" aria-label="Featured">
+    <article class="slide is-active" aria-roledescription="slide" aria-label="1 of 3">
+      <div class="slide-art" data-art="care"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">New season</p>
+        <h1 class="display">Gentle by nature</h1>
+        <p class="headline">Everyday care, made softer</p>
+        <a class="btn" href="shop.html">Shop now</a>
+      </div>
+    </article>
+    <article class="slide" aria-roledescription="slide" aria-label="2 of 3">
+      <div class="slide-art" data-art="scent"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">The fragrance edit</p>
+        <h2 class="display">Find your scent</h2>
+        <p class="headline">Four ways to feel fresh</p>
+        <a class="btn" href="quiz.html">Take the quiz</a>
+      </div>
+    </article>
+    <article class="slide" aria-roledescription="slide" aria-label="3 of 3">
+      <div class="slide-art" data-art="bulk"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">For hotels &amp; spas</p>
+        <h2 class="display">Made with care</h2>
+        <p class="headline">Bulk orders in 5 L cans</p>
+        <a class="btn" href="bulk.html">Request a quote</a>
+      </div>
+    </article>
+    <div class="hero-ctrl">
+      <button class="arrow prev" id="heroPrev" aria-label="Previous slide" disabled></button>
+      <div class="dots" id="heroDots" role="group" aria-label="Choose slide"></div>
+      <button class="arrow next" id="heroNext" aria-label="Next slide"></button>
+    </div>
+  </section>
+
+  <!-- Explore tiles -->
+  <section class="explore">
+    <div class="wrap">
+      <h2>Explore Audrey Care</h2>
+      <div class="tiles" id="tiles"></div>
+    </div>
+  </section>
+
+  <!-- Full-bleed banner -->
+  <section class="banner">
+    <div class="banner-art" id="bannerArt"></div>
+    <div class="banner-copy">
+      <h2 class="h2">Meet the <em>fragrance</em> collection</h2>
+      <p>Strawberry, Lavender, Apple and Ocean Breeze, across shampoo, shower gel, body lotion, hand wash and more.</p>
+      <a class="btn" href="shop.html">Shop now</a>
+    </div>
+  </section>
+
+  <!-- Bestsellers carousel -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 class="h2">Shop our <em>bestsellers</em></h2>
+        <p>Everyday favourites for hair, body and hands.</p>
+      </div>
+      <div class="pcar" id="bestCar">
+        <div class="pcar-view"><div class="pcar-track" id="bestTrack"></div></div>
+        <button class="pcar-arrow prev" aria-label="Previous products"></button>
+        <button class="pcar-arrow next" aria-label="Next products"></button>
+      </div>
+      <div class="center" style="margin-top:48px"><a class="btn" href="shop.html">Shop the range</a></div>
+    </div>
+  </section>
+
+  <!-- Bulk band -->
+  <section class="band">
+    <div class="wrap band-in">
+      <div class="band-copy">
+        <p class="eyebrow">For hotels, spas &amp; businesses</p>
+        <h2 class="h2">Bulk orders, <em>made simple</em></h2>
+        <p class="lead">Hand wash, shampoo, shower gel and more in 5 L cans, filled to your fragrance and packaging. Tell us what you need and we’ll send a quote.</p>
+        <a class="btn btn--light" href="bulk.html">Request a quote</a>
+      </div>
+      <div class="band-art" id="bandArt"></div>
+    </div>
+  </section>
+
+  <!-- Shop by fragrance (tabs) -->
+  <section class="section" id="scents">
+    <div class="wrap">
+      <div class="section-head center" style="margin-bottom:0">
+        <h2 class="h2">Shop by <em>fragrance</em></h2>
+        <p>Pick a scent and find it across the whole range.</p>
+      </div>
+      <div class="tabs-row" role="tablist" aria-label="Fragrance" id="scentTabs"></div>
+      <div class="pcar" id="scentCar" style="margin-top:40px">
+        <div class="pcar-view"><div class="pcar-track" id="scentTrack"></div></div>
+        <button class="pcar-arrow prev" aria-label="Previous products"></button>
+        <button class="pcar-arrow next" aria-label="Next products"></button>
+      </div>
+      <div class="center" style="margin-top:48px"><a class="btn" id="scentAll" href="shop.html">See all</a></div>
+    </div>
+  </section>
+
+  <!-- Full-bleed split -->
+  <section class="split-fb">
+    <div class="art" id="splitArt"></div>
+    <div class="copy">
+      <h2 class="h2">Care that’s kind to <em>everyday life</em></h2>
+      <p class="lead">From the first lather to the last drop, every Audrey Care product is made to feel comfortable and smell wonderful. Each batch is blended and checked before it leaves our workshop.</p>
+      <a class="btn" href="about.html">Our story</a>
+    </div>
+  </section>
+
+  <!-- Tips & ideas -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head" style="margin-bottom:48px"><h2 class="h2">Tips &amp; <em>ideas</em></h2></div>
+      <div id="tipsFeature"></div>
+      <div class="acards" id="tipsCards"></div>
+      <div class="center" style="margin-top:56px"><a class="btn" href="advice.html">See all tips</a></div>
+    </div>
+  </section>
+
+  <!-- Statement band -->
+  <section class="statement">
+    <div class="wrap">
+      <p class="eyebrow">Your daily dose of gentle</p>
+      <blockquote>Care that feels like a small, everyday kindness.</blockquote>
+      <cite>Audrey Care</cite>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/pages/home.js"></script>
+</body>
+</html>
