@@ -1,0 +1,30 @@
+/* On-page editor (shown only when a page is opened with ?edit=1 by the signed-in owner). */
+html.cms-editing [data-cms-edit] { cursor: text; }
+html.cms-editing [data-cms-edit]:hover { outline: 2px dashed #ab8457; outline-offset: 3px; background: rgba(171, 132, 87, .10); }
+html.cms-editing [contenteditable="true"] { outline: 2px solid #143d2c !important; outline-offset: 3px; background: #fffbe9 !important; color: #14231b !important; cursor: text; min-width: 1ch; -webkit-user-select: text; user-select: text; }
+html.cms-editing [data-slot] { cursor: pointer; }
+html.cms-editing [data-slot]:hover { outline: 3px dashed #2f8a57; outline-offset: -3px; }
+html.cms-editing body { padding-bottom: 96px; }
+
+#ac-editor { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 100000; width: min(960px, calc(100vw - 20px)); background: #14231b; color: #fff; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); font: 14px/1.35 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px 12px; }
+#ac-editor .ed-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#ac-editor .ed-title { font-size: 15px; margin-right: 4px; }
+#ac-editor .ed-title small { font-weight: 400; opacity: .75; margin-left: 6px; }
+#ac-editor .ed-page { display: flex; align-items: center; gap: 6px; opacity: .95; }
+#ac-editor select { background: #fff; color: #14231b; border: 0; border-radius: 6px; padding: 6px 8px; font: inherit; }
+#ac-editor .ed-sep { flex: 1 1 8px; }
+#ac-editor button, #ac-editor .ed-done { background: rgba(255, 255, 255, .12); color: #fff; border: 0; border-radius: 6px; padding: 7px 12px; font: inherit; cursor: pointer; text-decoration: none; }
+#ac-editor button:hover { background: rgba(255, 255, 255, .24); }
+#ac-editor .ed-done { background: #ab8457; font-weight: 600; }
+#ac-editor .ed-done:hover { background: #bf9768; }
+#ac-editor .ed-status { min-width: 80px; font-size: 13px; opacity: .9; }
+#ac-editor .ed-status.is-ok { color: #8fe0ae; }
+#ac-editor .ed-status.is-err { color: #ffb4a8; }
+#ac-editor .ed-hint { margin-top: 6px; font-size: 12.5px; opacity: .7; }
+
+#ac-pop { position: fixed; z-index: 100001; width: 230px; background: #fff; color: #14231b; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, .3); padding: 10px; display: grid; gap: 6px; font: 14px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+#ac-pop[hidden] { display: none; }
+#ac-pop button { text-align: left; padding: 9px 10px; border: 1px solid #dedede; border-radius: 6px; background: #fff; cursor: pointer; font: inherit; color: inherit; }
+#ac-pop button:hover { background: #f2f9f4; }
+
+@media (max-width: 640px) { #ac-editor .ed-page { width: 100%; } #ac-editor .ed-hint { display: none; } }

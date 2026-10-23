@@ -10,11 +10,12 @@
   var HERO_SLOT = { care: 'hero1', scent: 'hero2', bulk: 'hero3' };
   $$('[data-art]').forEach(function (el) {
     var k = el.getAttribute('data-art');
+    el.setAttribute('data-slot', HERO_SLOT[k]);
     el.innerHTML = '<div class="art-clip">' + ART.slot(HERO_SLOT[k], function () { return ART.hero(k); }) + '</div>';
   });
-  $('#bannerArt').innerHTML = ART.slot('banner', ART.wide);
-  $('#bandArt').innerHTML = ART.slot('band', ART.band);
-  $('#splitArt').innerHTML = ART.slot('split', ART.editorial);
+  $('#bannerArt').setAttribute('data-slot', 'banner'); $('#bannerArt').innerHTML = ART.slot('banner', ART.wide);
+  $('#bandArt').setAttribute('data-slot', 'band'); $('#bandArt').innerHTML = ART.slot('band', ART.band);
+  $('#splitArt').setAttribute('data-slot', 'split'); $('#splitArt').innerHTML = ART.slot('split', ART.editorial);
 
   /* ---------- hero: manual, instant swap, no autoplay (as in the reference) ---------- */
   (function () {
@@ -46,7 +47,7 @@
     var tiles = [{ id: '', name: 'All', href: 'shop.html', art: 'all' }].concat(D.groups.map(function (g) { return { id: g.id, name: g.name, href: 'shop.html?group=' + g.id, art: g.id }; }))
       .concat([{ id: 'bulk', name: 'Bulk orders', href: 'bulk.html', art: 'bulk' }]);
     $('#tiles').innerHTML = tiles.map(function (t) {
-      return '<a class="tile" href="' + t.href + '"><span class="tile-img">' + ART.tile(t.art) + '</span><span class="tile-name"><span>' + AC.esc(t.name) + '</span>' + ARROW + '</span></a>';
+      return '<a class="tile" href="' + t.href + '"><span class="tile-img" data-slot="tiles.' + t.art + '">' + ART.tile(t.art) + '</span><span class="tile-name"><span>' + AC.esc(t.name) + '</span>' + ARROW + '</span></a>';
     }).join('');
 
     /* bestsellers */

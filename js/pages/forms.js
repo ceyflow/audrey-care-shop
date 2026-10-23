@@ -29,7 +29,7 @@
   if (page === 'contact') {
     var bits = [
       C.ADDRESS ? ['pin', 'Visit us', AC.esc(C.ADDRESS)] : null,
-      C.PHONE ? ['phone', 'Call us', '<a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + AC.esc(C.PHONE) + '</a>'] : null,
+      C.PHONE ? ['phone', 'Call us', '<a href="tel:' + AC.esc(C.PHONE.replace(/\s/g, '')) + '">' + AC.esc(C.PHONE) + '</a>'] : null,
       C.EMAIL ? ['mail', 'Email us', '<a href="mailto:' + AC.esc(C.EMAIL) + '">' + AC.esc(C.EMAIL) + '</a>'] : null,
       C.WHATSAPP_NUMBER ? ['chat', 'WhatsApp', '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">Message us on WhatsApp</a>'] : null
     ].filter(Boolean);

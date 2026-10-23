@@ -62,7 +62,7 @@
   function renderSummary() {
     var lines = AC.cart.lines(), sub = AC.cart.subtotal(), ship = AC.shipping(sub);
     $('#summary').innerHTML = '<h2>Your order</h2>' + lines.map(function (l) {
-      return '<div class="sum-line"><div class="line-img">' + AC.media(l.p, 0) + '<em>' + l.q + '</em></div><div><b>' + AC.esc(l.p.name) + '</b><span>' + AC.esc(l.p.frag.name) + ' · ' + AC.esc(l.v.label) + '</span></div><b style="font-weight:500">' + AC.money(l.total) + '</b></div>';
+      return '<div class="sum-line" data-nocms><div class="line-img">' + AC.media(l.p, 0) + '<em>' + l.q + '</em></div><div><b>' + AC.esc(l.p.name) + '</b><span>' + AC.esc(l.p.frag.name) + ' · ' + AC.esc(l.v.label) + '</span></div><b style="font-weight:500">' + AC.money(l.total) + '</b></div>';
     }).join('') +
       '<div class="sum-totals"><div class="row"><span>Subtotal</span><span>' + AC.money(sub) + '</span></div>' +
       '<div class="row"><span>Delivery</span><span>' + (ship ? AC.money(ship) : '<span class="free">Free</span>') + '</span></div>' +
