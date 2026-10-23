@@ -22,6 +22,37 @@ supabase/seed.sql        sample products (generated from js/data.js)
 supabase/functions/      the 3 server functions (place-order, submit-form, payhere-notify)
 ```
 
+## Edit the site yourself (no coding needed)
+
+Everything is a plain file in this repo. To change something: open the file on GitHub, click the pencil
+icon (✏), edit, then **Commit changes**. The live site updates about a minute later.
+
+| To change… | Edit this file |
+|---|---|
+| **Logo** | upload the image into the `assets` folder, then put its path in `LOGO` in `js/config.js` |
+| **Photos** (hero slides, banner, tiles, pictures on the home and story pages) | upload into `assets`, then fill the `IMAGES` list in `js/config.js` |
+| **Products**: names, prices, descriptions, product photos | `js/data.js` |
+| **Words on the home page** (hero slides, banner, sections) | `index.html` |
+| **Words on other pages** | `about.html`, `bulk.html`, `contact.html`, `policies.html` |
+| **Advice articles** | `js/data.js`, under `articles` |
+| **Phone, WhatsApp, email, address, delivery fee, bank details** | `js/config.js` |
+| **Colours** | the top of `css/styles.css` (`--brand` is the main green) |
+| **Menu and footer links** | `js/layout.js` |
+
+**Uploading a picture:** open the `assets` folder in the repo, click **Add file → Upload files**, drag the picture in,
+then **Commit changes**. Use short names without spaces (`hero-1.jpg`). Then put the path in `js/config.js`,
+for example `hero1: 'assets/hero-1.jpg'`.
+
+**Picture sizes that fit best** (width × height; JPG or WebP; keep each under about 300 KB):
+hero slides 1000 × 800 · banner 1600 × 640 · bulk block 900 × 600 · home split picture 640 × 640 ·
+story page picture 520 × 650 · category tiles 340 × 220 · logo: transparent PNG or SVG at least 200 px tall.
+
+**Product photos:** one square picture per product (800 × 800, product centred on white). Upload to
+`assets/products/`, then in `js/data.js` set `images: ['assets/products/shampoo-lavender.jpg']` on that product.
+
+**Orders and customers** are not edited in these files. They live in the database once Supabase is connected
+(section 2 below), where you manage them in the Supabase dashboard.
+
 ## 1. Preview it on your computer (2 minutes)
 
 ```

@@ -40,6 +40,7 @@
   window.AC_ICON = function (n) { return I[n] || ''; };
 
   function brand() {
+    if (C.LOGO) return '<a class="brand" href="index.html" aria-label="' + C.SITE_NAME + ' home"><img class="brand-img" src="' + String(C.LOGO).replace(/"/g, '&quot;') + '" alt="' + C.SITE_NAME + '"></a>';
     return '<a class="brand" href="index.html" aria-label="' + C.SITE_NAME + ' home">' + I.logo +
       '<span class="brand-name">Audrey Care<small>Gentle everyday care</small></span></a>';
   }

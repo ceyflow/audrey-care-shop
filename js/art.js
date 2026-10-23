@@ -167,6 +167,15 @@
       '<path d="M6 0H112" stroke="#fff" stroke-opacity=".35" stroke-width="2.5"/></g>';
   }
 
+
+  /* ---------- your own photos (see IMAGES in config.js) ---------- */
+  function photo(src, alt) {
+    return '<img src="' + String(src).replace(/"/g, '&quot;') + '" alt="' + esc(alt || '') + '" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">';
+  }
+  function images() { return (window.AC_CONFIG && window.AC_CONFIG.IMAGES) || {}; }
+  /* Returns the photo for a named slot if one is set, otherwise the built-in illustration. */
+  function slot(name, fallback, alt) { var v = images()[name]; return v ? photo(v, alt || name) : fallback(); }
+
   /* ---------- public: product packshot (400 x 500) ---------- */
   function lookup(key, list) {
     for (var i = 0; i < list.length; i++) if (list[i].id === key) return list[i];
@@ -276,6 +285,8 @@
     bulk:  { bg: '#E58A3C', item: ['can', '#2F8A57', 'Hand Wash', ''] }
   };
   function tile(g) {
+    var tp = images().tiles || {};
+    if (tp[g]) return photo(tp[g], g);
     var st = TILE[g] || TILE.all, id = 't' + (++uid), inner;
     if (g === 'all' || !TILE[g]) {
       inner = '<g transform="translate(170 110) scale(3.2) translate(-20 -20)"><path d="M5 30C5 15 15 5 35 5c0 17-9 29-24 29-3 0-5-1-6-4z" fill="#fff"/><path d="M7 33c5-9 12-16 22-22" stroke="' + st.bg + '" stroke-width="2.2" stroke-linecap="round" fill="none"/></g>';
@@ -331,5 +342,5 @@
       '</svg>';
   }
 
-  window.AC_ART = { packshot: packshot, wide: wide, tile: tile, banner: banner, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
+  window.AC_ART = { slot: slot, photo: photo, packshot: packshot, wide: wide, tile: tile, banner: banner, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
 })();

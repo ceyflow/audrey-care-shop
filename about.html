@@ -46,7 +46,7 @@
 <script src="js/app.js"></script>
 <script>
   AC.$$('[data-icon]').forEach(function (el) { el.innerHTML = AC_ICONS[el.getAttribute('data-icon')] || ''; });
-  AC.$('#art').innerHTML = AC_ART.editorial();
+  AC.$('#art').innerHTML = AC_ART.slot('about', AC_ART.editorial);
 </script>
 </body>
 </html>
