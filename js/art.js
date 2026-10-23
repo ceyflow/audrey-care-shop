@@ -29,7 +29,7 @@
       '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="7" fill="#fff" opacity=".95"/>' +
       '<text x="' + cx + '" y="' + (y + 21) + '" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="' + shade(color, -0.45) + '">Audrey Care</text>' +
       '<rect x="' + (cx - 11) + '" y="' + (y + 29) + '" width="22" height="1.5" fill="' + color + '"/>' +
-      '<text x="' + cx + '" y="' + (y + 46) + '" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="7.4" letter-spacing="1.3" fill="#2a3a31">' + esc(kind.toUpperCase()) + '</text>' +
+      '<text x="' + cx + '" y="' + (y + 46) + '" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-weight="600" font-size="7.4" letter-spacing="1.3" fill="#2a3a31">' + esc(kind.toUpperCase()) + '</text>' +
       '<text x="' + cx + '" y="' + (y + 62) + '" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="11.5" fill="' + color + '">' + esc(scent) + '</text>'
     );
   }
@@ -108,7 +108,7 @@
         '<rect x="56" y="156" width="88" height="96" rx="7" fill="#fff" opacity=".95"/>' +
         '<text x="100" y="182" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="' + shade(c, -0.45) + '">Audrey Care</text>' +
         '<text x="100" y="222" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="30" fill="' + c + '">5 L</text>' +
-        '<text x="100" y="240" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="7.4" letter-spacing="1.3" fill="#2a3a31">' + esc((kind || 'BULK').toUpperCase()) + '</text>';
+        '<text x="100" y="240" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-weight="600" font-size="7.4" letter-spacing="1.3" fill="#2a3a31">' + esc((kind || 'BULK').toUpperCase()) + '</text>';
     }
   };
 
@@ -180,7 +180,8 @@
     var kind = lookup(product.kind, D.kinds) || D.kinds[0];
     var id = 'g' + (++uid);
     var alt = opts.view === 'alt';
-    var bg = alt ? shade(frag.color, 0.78) : frag.tint;
+    var plain = !!opts.plain;
+    var bg = plain ? '#ffffff' : (alt ? shade(frag.color, 0.78) : frag.tint);
     var inner = shape(kind.type, frag.color, kind.name, frag.name);
     var scale = opts.scale || 1.42;
     var tx = 200 - 100 * scale;
@@ -190,10 +191,12 @@
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="' + esc(product.name + ' ' + frag.name) + '" preserveAspectRatio="xMidYMid slice">' +
       '<defs><radialGradient id="' + id + 'g" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
       '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
-      '<rect width="400" height="500" fill="' + bg + '"/>' +
-      '<rect width="400" height="500" fill="url(#' + id + 'g)"/>';
+      (opts.bg === 'none' ? '' : '<rect width="400" height="500" fill="' + bg + '"/>') +
+      (plain ? '' : '<rect width="400" height="500" fill="url(#' + id + 'g)"/>');
 
-    if (alt) {
+    if (plain) {
+      /* clean cut-out on white: no motif, no glow */
+    } else if (alt) {
       svg += motif(frag.id, frag.color, 262, 190, 2.1, -8, 0.22) +
              leaf(-20, 430, 1.4, -20, shade(frag.color, 0.2), 0.35);
     } else {
@@ -207,7 +210,7 @@
   /* ---------- public: hero compositions (900 x 780) ---------- */
   function heroSvg(inner, bgA, bgB, vb) {
     var id = 'h' + (++uid);
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + (vb || '90 0 720 780') + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + (vb || '90 120 720 570') + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
       '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + bgA + '"/><stop offset="1" stop-color="' + bgB + '"/></linearGradient>' +
       '<radialGradient id="' + id + 'g" cx=".42" cy=".4" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
       '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
@@ -275,13 +278,13 @@
   function tile(g) {
     var st = TILE[g] || TILE.all, id = 't' + (++uid), inner;
     if (g === 'all' || !TILE[g]) {
-      inner = '<g transform="translate(174 150) scale(4.4) translate(-20 -20)"><path d="M5 30C5 15 15 5 35 5c0 17-9 29-24 29-3 0-5-1-6-4z" fill="#fff"/><path d="M7 33c5-9 12-16 22-22" stroke="' + st.bg + '" stroke-width="2.2" stroke-linecap="round" fill="none"/></g>';
+      inner = '<g transform="translate(170 110) scale(3.2) translate(-20 -20)"><path d="M5 30C5 15 15 5 35 5c0 17-9 29-24 29-3 0-5-1-6-4z" fill="#fff"/><path d="M7 33c5-9 12-16 22-22" stroke="' + st.bg + '" stroke-width="2.2" stroke-linecap="round" fill="none"/></g>';
     } else {
-      inner = '<circle cx="174" cy="150" r="118" fill="#fff" opacity=".18"/>' + placed(id, st.item[0], st.item[1], st.item[2], st.item[3], 86, 14, 0.88, 0);
+      inner = '<circle cx="170" cy="110" r="88" fill="#fff" opacity=".18"/>' + placed(id, st.item[0], st.item[1], st.item[2], st.item[3], 112, 10, 0.64, 0);
     }
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 348 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
       '<defs><radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
-      '<rect width="348" height="300" fill="' + st.bg + '"/>' + inner + '</svg>';
+      '<rect width="340" height="220" fill="' + st.bg + '"/>' + inner + '</svg>';
   }
 
   var BANNER = {
@@ -299,6 +302,21 @@
       b.items.map(function (i) { return placed(id, i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]); }).join('') + '</svg>';
   }
 
+
+  function wide() {
+    var fr = window.AC_DATA.fragrances;
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+      '<defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2F8A57"/><stop offset="1" stop-color="#1B5239"/></linearGradient>' +
+      '<radialGradient id="ws" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+      '<rect width="1600" height="640" fill="url(#wg)"/>' +
+      '<circle cx="470" cy="330" r="330" fill="#fff" opacity=".07"/><circle cx="470" cy="330" r="210" fill="#fff" opacity=".07"/>' +
+      leaf(40, 40, 1.9, 30, '#7CBF93', 0.35) + leaf(820, 430, 1.8, -25, '#7CBF93', 0.3) +
+      placed('w', 'bottle', fr[1].color, 'Shampoo', 'Lavender', 90, 150, 1.45, -6) +
+      placed('w', 'pump', fr[0].color, 'Body Lotion', 'Strawberry', 290, 110, 1.75, 0) +
+      placed('w', 'pump', fr[2].color, 'Hand Wash', 'Apple', 520, 160, 1.45, 4) +
+      placed('w', 'spray', fr[3].color, 'Air Freshener', 'Ocean Breeze', 680, 190, 1.3, 7) + '</svg>';
+  }
+
   /* ---------- public: editorial collage (arch, 600 x 760) ---------- */
   function editorial() {
     var id = 'e' + (++uid), fr = window.AC_DATA.fragrances;
@@ -313,5 +331,5 @@
       '</svg>';
   }
 
-  window.AC_ART = { packshot: packshot, tile: tile, banner: banner, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
+  window.AC_ART = { packshot: packshot, wide: wide, tile: tile, banner: banner, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
 })();

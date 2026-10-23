@@ -7,8 +7,7 @@
 <meta name="description" content="Gentle shampoos, shower gels, lotions and fragrances from Audrey Care. Delivered across Sri Lanka, and in bulk for hotels and spas.">
 <meta name="theme-color" content="#143d2c">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/fraunces-latin-wght-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/figtree-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
 <script>document.documentElement.classList.add('js')</script>
 </head>
@@ -17,97 +16,73 @@
 
 <main id="main">
 
-  <!-- Hero carousel -->
-  <section class="hero is-playing" id="hero" aria-roledescription="carousel" aria-label="Featured">
-    <div class="hero-track">
-      <article class="slide is-active" aria-roledescription="slide" aria-label="1 of 3">
-        <div class="slide-art" data-art="care"></div>
-        <div class="slide-copy">
-          <p class="eyebrow rise" style="--i:0">New season</p>
-          <h1 class="display rise" style="--i:1">Gentle by nature</h1>
-          <p class="headline rise" style="--i:2">Everyday care, made softer</p>
-          <a class="btn rise" style="--i:3" href="shop.html">Shop now</a>
-        </div>
-      </article>
-      <article class="slide" aria-roledescription="slide" aria-label="2 of 3">
-        <div class="slide-art" data-art="scent"></div>
-        <div class="slide-copy">
-          <p class="eyebrow rise" style="--i:0">The fragrance edit</p>
-          <h2 class="display rise" style="--i:1">Find your scent</h2>
-          <p class="headline rise" style="--i:2">Four ways to feel fresh</p>
-          <a class="btn rise" style="--i:3" href="#scents">Explore scents</a>
-        </div>
-      </article>
-      <article class="slide" aria-roledescription="slide" aria-label="3 of 3">
-        <div class="slide-art" data-art="bulk"></div>
-        <div class="slide-copy">
-          <p class="eyebrow rise" style="--i:0">For hotels &amp; spas</p>
-          <h2 class="display rise" style="--i:1">Made with care</h2>
-          <p class="headline rise" style="--i:2">Bulk orders in 5 L cans</p>
-          <a class="btn rise" style="--i:3" href="bulk.html">Request a quote</a>
-        </div>
-      </article>
-    </div>
+  <!-- Hero: manual carousel, slides swap instantly -->
+  <section class="hero" id="hero" aria-roledescription="carousel" aria-label="Featured">
+    <article class="slide is-active" aria-roledescription="slide" aria-label="1 of 3">
+      <div class="slide-art" data-art="care"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">New season</p>
+        <h1 class="display">Gentle by nature</h1>
+        <p class="headline">Everyday care, made softer</p>
+        <a class="btn" href="shop.html">Shop now</a>
+      </div>
+    </article>
+    <article class="slide" aria-roledescription="slide" aria-label="2 of 3">
+      <div class="slide-art" data-art="scent"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">The fragrance edit</p>
+        <h2 class="display">Find your scent</h2>
+        <p class="headline">Four ways to feel fresh</p>
+        <a class="btn" href="quiz.html">Take the quiz</a>
+      </div>
+    </article>
+    <article class="slide" aria-roledescription="slide" aria-label="3 of 3">
+      <div class="slide-art" data-art="bulk"></div>
+      <div class="slide-copy">
+        <p class="eyebrow">For hotels &amp; spas</p>
+        <h2 class="display">Made with care</h2>
+        <p class="headline">Bulk orders in 5 L cans</p>
+        <a class="btn" href="bulk.html">Request a quote</a>
+      </div>
+    </article>
     <div class="hero-ctrl">
-      <button class="arrow prev" id="heroPrev" aria-label="Previous slide"></button>
+      <button class="arrow prev" id="heroPrev" aria-label="Previous slide" disabled></button>
       <div class="dots" id="heroDots" role="group" aria-label="Choose slide"></div>
       <button class="arrow next" id="heroNext" aria-label="Next slide"></button>
     </div>
-    <div class="hero-progress" aria-hidden="true"><i></i></div>
   </section>
 
-  <!-- Shop by category -->
-  <section class="section">
+  <!-- Explore tiles -->
+  <section class="explore">
     <div class="wrap">
-      <div class="section-head center reveal">
-        <span class="kicker">Find your essentials</span>
-        <h2 class="h2">Shop by <em>category</em></h2>
-      </div>
+      <h2>Explore Audrey Care</h2>
       <div class="tiles" id="tiles"></div>
     </div>
   </section>
 
-  <!-- Bestsellers -->
-  <section class="section section--tint">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <div><span class="kicker">Loved by our customers</span><h2 class="h2">Bestsellers &amp; <em>new in</em></h2></div>
-        <div class="rail-nav">
-          <button id="railPrev" aria-label="Scroll left"></button>
-          <button id="railNext" aria-label="Scroll right"></button>
-        </div>
-      </div>
-      <div class="rail" id="rail" tabindex="-1"></div>
-      <div class="center reveal" style="margin-top:48px"><a class="btn btn--ghost" href="shop.html">Shop all products</a></div>
+  <!-- Full-bleed banner -->
+  <section class="banner">
+    <div class="banner-art" id="bannerArt"></div>
+    <div class="banner-copy">
+      <h2 class="h2">Meet the <em>fragrance</em> collection</h2>
+      <p>Strawberry, Lavender, Apple and Ocean Breeze, across shampoo, shower gel, body lotion, hand wash and more.</p>
+      <a class="btn" href="shop.html">Shop now</a>
     </div>
   </section>
 
-  <!-- Fragrances -->
-  <section class="section" id="scents">
+  <!-- Bestsellers carousel -->
+  <section class="section">
     <div class="wrap">
-      <div class="section-head center reveal">
-        <span class="kicker">Choose your mood</span>
-        <h2 class="h2">Four <em>fragrances</em></h2>
+      <div class="section-head center">
+        <h2 class="h2">Shop our <em>bestsellers</em></h2>
+        <p>Everyday favourites for hair, body and hands.</p>
       </div>
-      <div class="scents" id="scentList"></div>
-    </div>
-  </section>
-
-  <!-- Editorial -->
-  <section class="section section--cream">
-    <div class="wrap split">
-      <div class="arch reveal"><div data-parallax id="editorialArt" style="position:absolute;inset:0"></div></div>
-      <div class="split-copy">
-        <span class="kicker serif-i reveal" style="font-size:24px;color:var(--green-600)">Our approach</span>
-        <h2 class="h2 reveal" style="--d:1">Care that’s kind to <em>everyday life</em></h2>
-        <p class="lead reveal" style="--d:2">From the first lather to the last drop, every Audrey Care product is made to feel comfortable and smell wonderful. Each batch is blended and checked before it leaves our workshop.</p>
-        <ul class="values">
-          <li class="reveal" style="--d:3"><span class="ico" data-icon="drop"></span><div><b>Gentle formulas</b><span>Designed for daily use, with fragrances that stay pleasant, never overpowering.</span></div></li>
-          <li class="reveal" style="--d:4"><span class="ico" data-icon="box"></span><div><b>Packed with care</b><span>Every order is checked and packed by our own team before it is dispatched.</span></div></li>
-          <li class="reveal" style="--d:5"><span class="ico" data-icon="truck"></span><div><b>Delivered across Sri Lanka</b><span>Pay on delivery, by bank transfer, or securely by card.</span></div></li>
-        </ul>
-        <a class="link-arrow reveal" style="--d:6" href="about.html">Our story <span data-icon="arrow"></span></a>
+      <div class="pcar" id="bestCar">
+        <div class="pcar-view"><div class="pcar-track" id="bestTrack"></div></div>
+        <button class="pcar-arrow prev" aria-label="Previous products"></button>
+        <button class="pcar-arrow next" aria-label="Next products"></button>
       </div>
+      <div class="center" style="margin-top:48px"><a class="btn" href="shop.html">Shop the range</a></div>
     </div>
   </section>
 
@@ -115,36 +90,58 @@
   <section class="band">
     <div class="wrap band-in">
       <div class="band-copy">
-        <p class="eyebrow reveal">For hotels, spas &amp; businesses</p>
-        <h2 class="headline reveal" style="--d:1">Bulk orders, <em class="serif-i">made simple</em></h2>
-        <p class="lead reveal" style="--d:2">Hand wash, shampoo, shower gel and more in 5 L cans, filled to your fragrance and packaging. Tell us what you need and we’ll send a quote.</p>
-        <a class="btn btn--light reveal" style="--d:3" href="bulk.html">Request a quote</a>
+        <p class="eyebrow">For hotels, spas &amp; businesses</p>
+        <h2 class="h2">Bulk orders, <em>made simple</em></h2>
+        <p class="lead">Hand wash, shampoo, shower gel and more in 5 L cans, filled to your fragrance and packaging. Tell us what you need and we’ll send a quote.</p>
+        <a class="btn btn--light" href="bulk.html">Request a quote</a>
       </div>
       <div class="band-art" id="bandArt"></div>
     </div>
   </section>
 
-  <!-- Trust -->
-  <section class="section">
+  <!-- Shop by fragrance (tabs) -->
+  <section class="section" id="scents">
     <div class="wrap">
-      <ul class="trust">
-        <li class="reveal"><span class="ico" data-icon="truck"></span><div><b>Island-wide delivery</b><span>Free over Rs 10,000</span></div></li>
-        <li class="reveal" style="--d:1"><span class="ico" data-icon="cash"></span><div><b>Cash on delivery</b><span>Pay when it arrives</span></div></li>
-        <li class="reveal" style="--d:2"><span class="ico" data-icon="lock"></span><div><b>Secure card payments</b><span>Debit &amp; credit cards</span></div></li>
-        <li class="reveal" style="--d:3"><span class="ico" data-icon="chat"></span><div><b>Real people, real help</b><span>Message us any time</span></div></li>
-      </ul>
+      <div class="section-head center" style="margin-bottom:0">
+        <h2 class="h2">Shop by <em>fragrance</em></h2>
+        <p>Pick a scent and find it across the whole range.</p>
+      </div>
+      <div class="tabs-row" role="tablist" aria-label="Fragrance" id="scentTabs"></div>
+      <div class="pcar" id="scentCar" style="margin-top:40px">
+        <div class="pcar-view"><div class="pcar-track" id="scentTrack"></div></div>
+        <button class="pcar-arrow prev" aria-label="Previous products"></button>
+        <button class="pcar-arrow next" aria-label="Next products"></button>
+      </div>
+      <div class="center" style="margin-top:48px"><a class="btn" id="scentAll" href="shop.html">See all</a></div>
     </div>
   </section>
 
-  <!-- Newsletter -->
-  <section class="section section--tint">
-    <div class="wrap newsletter">
-      <div class="reveal"><span class="kicker serif-i" style="font-size:24px;color:var(--green-600)">Stay in touch</span><h2 class="h2">New scents, <em>first</em></h2><p class="muted" style="margin-top:10px">Join our list for launches and offers. No spam, unsubscribe any time.</p></div>
-      <form class="reveal" style="--d:1" id="nlForm" novalidate>
-        <div class="nl-form"><input type="email" name="email" placeholder="Your email address" aria-label="Email address" required autocomplete="email"><button type="submit">Subscribe</button></div>
-        <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <p class="nl-note" id="nlNote" role="status"></p>
-      </form>
+  <!-- Full-bleed split -->
+  <section class="split-fb">
+    <div class="art" id="splitArt"></div>
+    <div class="copy">
+      <h2 class="h2">Care that’s kind to <em>everyday life</em></h2>
+      <p class="lead">From the first lather to the last drop, every Audrey Care product is made to feel comfortable and smell wonderful. Each batch is blended and checked before it leaves our workshop.</p>
+      <a class="btn" href="about.html">Our story</a>
+    </div>
+  </section>
+
+  <!-- Tips & ideas -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head" style="margin-bottom:48px"><h2 class="h2">Tips &amp; <em>ideas</em></h2></div>
+      <div id="tipsFeature"></div>
+      <div class="acards" id="tipsCards"></div>
+      <div class="center" style="margin-top:56px"><a class="btn" href="advice.html">See all tips</a></div>
+    </div>
+  </section>
+
+  <!-- Statement band -->
+  <section class="statement">
+    <div class="wrap">
+      <p class="eyebrow">Your daily dose of gentle</p>
+      <blockquote>Care that feels like a small, everyday kindness.</blockquote>
+      <cite>Audrey Care</cite>
     </div>
   </section>
 

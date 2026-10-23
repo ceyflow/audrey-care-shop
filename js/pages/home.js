@@ -1,114 +1,80 @@
 (function () {
   var AC = window.AC, $ = AC.$, $$ = AC.$$, I = window.AC_ICONS, D = window.AC_DATA, ART = window.AC_ART;
+  var ARROW = I.arrow;
 
-  /* static icons declared in markup as data-icon="name" */
-  $$('[data-icon]').forEach(function (el) { el.innerHTML = I[el.getAttribute('data-icon')] || ''; });
   $('#heroPrev').innerHTML = I.left; $('#heroNext').innerHTML = I.right;
-  $('#railPrev').innerHTML = I.left; $('#railNext').innerHTML = I.right;
+  $$('.pcar-arrow.prev').forEach(function (b) { b.innerHTML = I.left; });
+  $$('.pcar-arrow.next').forEach(function (b) { b.innerHTML = I.right; });
 
-  /* hero artwork */
+  /* artwork */
   $$('[data-art]').forEach(function (el) { el.innerHTML = '<div class="art-clip">' + ART.hero(el.getAttribute('data-art')) + '</div>'; });
-  $('#editorialArt').innerHTML = ART.editorial();
+  $('#bannerArt').innerHTML = ART.wide();
   $('#bandArt').innerHTML = ART.band();
+  $('#splitArt').innerHTML = ART.editorial();
 
-  /* ---------- hero carousel ---------- */
+  /* ---------- hero: manual, instant swap, no autoplay (as in the reference) ---------- */
   (function () {
-    var hero = $('#hero'), slides = $$('.slide', hero), dots = $('#heroDots'), idx = 0, timer, paused = false;
-    var DUR = 7000;
-    hero.style.setProperty('--dur', DUR + 'ms');
-
+    var hero = $('#hero'), slides = $$('.slide', hero), dots = $('#heroDots'), prev = $('#heroPrev'), next = $('#heroNext'), idx = 0;
     slides.forEach(function (s, i) {
       var b = document.createElement('button');
       b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
       b.addEventListener('click', function () { go(i); });
       dots.appendChild(b);
-      if (i) s.setAttribute('inert', '');
     });
-
-    function restartProgress() {
-      hero.classList.remove('is-playing'); void hero.offsetWidth;
-      if (!AC.reduced && !paused) hero.classList.add('is-playing');
-    }
-    function schedule() {
-      clearTimeout(timer);
-      if (AC.reduced || paused) return;
-      timer = setTimeout(function () { go(idx + 1); }, DUR);
-    }
     function go(n) {
-      n = (n + slides.length) % slides.length;
-      slides[idx].classList.remove('is-active'); slides[idx].setAttribute('inert', '');
-      idx = n;
-      slides[idx].classList.add('is-active'); slides[idx].removeAttribute('inert');
+      n = Math.max(0, Math.min(slides.length - 1, n));
+      slides[idx].classList.remove('is-active'); idx = n; slides[idx].classList.add('is-active');
       $$('button', dots).forEach(function (b, i) { b.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
-      restartProgress(); schedule();
+      prev.disabled = idx === 0; next.disabled = idx === slides.length - 1;
     }
-    $('#heroPrev').addEventListener('click', function () { go(idx - 1); });
-    $('#heroNext').addEventListener('click', function () { go(idx + 1); });
-
-    function pause(v) { paused = v; if (v) { clearTimeout(timer); hero.classList.remove('is-playing'); } else { restartProgress(); schedule(); } }
-    hero.addEventListener('mouseenter', function () { pause(true); });
-    hero.addEventListener('mouseleave', function () { pause(false); });
-    hero.addEventListener('focusin', function () { pause(true); });
-    hero.addEventListener('focusout', function () { pause(false); });
-    document.addEventListener('visibilitychange', function () { pause(document.hidden); });
+    prev.addEventListener('click', function () { go(idx - 1); });
+    next.addEventListener('click', function () { go(idx + 1); });
     hero.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') go(idx - 1); if (e.key === 'ArrowRight') go(idx + 1); });
-
     var sx = null;
     hero.addEventListener('pointerdown', function (e) { sx = e.clientX; });
-    hero.addEventListener('pointerup', function (e) {
-      if (sx === null) return; var dx = e.clientX - sx; sx = null;
-      if (Math.abs(dx) > 60) go(idx + (dx < 0 ? 1 : -1));
-    });
-
-    $$('button', dots)[0].setAttribute('aria-current', 'true');
-    restartProgress(); schedule();
+    hero.addEventListener('pointerup', function (e) { if (sx === null) return; var dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 60) go(idx + (dx < 0 ? 1 : -1)); });
+    go(0);
   })();
 
-  /* ---------- content that needs the catalogue ---------- */
+  /* ---------- sections that need the catalogue ---------- */
   AC.ready.then(function () {
-    /* category tiles: one representative product per group */
-    var rep = { hair: 'shampoo-lavender', body: 'body-lotion-lavender', hands: 'hand-wash-apple', home: 'air-freshener-ocean-breeze' };
-    $('#tiles').innerHTML = D.groups.map(function (g, i) {
-      var p = AC.product(rep[g.id]) || AC.products.filter(function (x) { return x.kindObj.group === g.id; })[0];
-      if (!p) return '';
-      return '<a class="tile reveal" style="--d:' + i + '" href="shop.html?group=' + g.id + '">' + AC.media(p, 1) +
-        '<div class="tile-cap"><b>' + g.name + '</b><i>' + I.arrow + '</i></div></a>';
+    /* explore tiles */
+    var tiles = [{ id: '', name: 'All', href: 'shop.html', art: 'all' }].concat(D.groups.map(function (g) { return { id: g.id, name: g.name, href: 'shop.html?group=' + g.id, art: g.id }; }))
+      .concat([{ id: 'bulk', name: 'Bulk orders', href: 'bulk.html', art: 'bulk' }]);
+    $('#tiles').innerHTML = tiles.map(function (t) {
+      return '<a class="tile" href="' + t.href + '"><span class="tile-img">' + ART.tile(t.art) + '</span><span class="tile-name"><span>' + AC.esc(t.name) + '</span>' + ARROW + '</span></a>';
     }).join('');
 
-    /* bestseller rail */
+    /* bestsellers */
     var feat = AC.products.filter(function (p) { return p.badge; });
     AC.products.forEach(function (p) { if (feat.indexOf(p) < 0 && feat.length < 8) feat.push(p); });
-    $('#rail').innerHTML = feat.map(function (p, i) { return AC.card(p, i % 4); }).join('');
+    $('#bestTrack').innerHTML = feat.map(function (p) { return AC.card(p); }).join('');
+    AC.carousel($('#bestCar'));
 
-    var rail = $('#rail'), prev = $('#railPrev'), next = $('#railNext');
-    function railState() {
-      prev.disabled = rail.scrollLeft < 8;
-      next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 8;
+    /* fragrance tabs */
+    var scentCar, current = D.fragrances[0].id;
+    function paintScent() {
+      $$('#scentTabs .tab').forEach(function (t) { t.setAttribute('aria-selected', t.getAttribute('data-id') === current); });
+      $('#scentTrack').innerHTML = AC.products.filter(function (p) { return p.fragrance === current; }).map(function (p) { return AC.card(p); }).join('');
+      $('#scentAll').href = 'shop.html?scent=' + current;
+      if (scentCar) scentCar.reset();
     }
-    function step(dir) { rail.scrollBy({ left: dir * (rail.clientWidth * 0.8), behavior: 'smooth' }); }
-    prev.addEventListener('click', function () { step(-1); });
-    next.addEventListener('click', function () { step(1); });
-    rail.addEventListener('scroll', railState, { passive: true }); window.addEventListener('resize', railState); railState();
+    $('#scentTabs').innerHTML = D.fragrances.map(function (f) { return '<button class="tab" role="tab" data-id="' + f.id + '">' + AC.esc(f.name) + '</button>'; }).join('');
+    $('#scentTabs').addEventListener('click', function (e) { var t = e.target.closest('.tab'); if (!t) return; current = t.getAttribute('data-id'); paintScent(); });
+    scentCar = AC.carousel($('#scentCar'));
+    paintScent();
 
-    /* fragrance orbs */
-    $('#scentList').innerHTML = D.fragrances.map(function (f, i) {
-      var p = { name: f.name, kind: 'shower-gel', fragrance: f.id };
-      return '<a class="scent reveal" style="--d:' + i + '" href="shop.html?scent=' + f.id + '"><div class="scent-orb">' +
-        ART.packshot(p, { view: 'alt', scale: 1.25 }) + '</div><b>' + f.name + '</b><span>' + f.note + '</span></a>';
-    }).join('');
-
-    AC.reveal();
-  });
-
-  /* ---------- newsletter ---------- */
-  var form = $('#nlForm'), note = $('#nlNote');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = form.email.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { note.style.color = 'var(--danger)'; note.textContent = 'Please enter a valid email address.'; return; }
-    note.style.color = ''; note.textContent = 'Subscribing…';
-    AC.submitForm('newsletter', { email: email, company: form.company.value }).then(function () {
-      note.textContent = 'Thank you — you’re on the list.'; form.reset();
-    }).catch(function (err) { note.style.color = 'var(--danger)'; note.textContent = err.message; });
+    /* tips */
+    var A = D.articles || [];
+    if (A.length) {
+      var f = A[0];
+      $('#tipsFeature').innerHTML = '<div class="feature"><a class="img" href="advice.html?id=' + f.id + '" tabindex="-1" aria-hidden="true">' + ART.banner(f.group) + '</a><div>' +
+        '<div class="kick">' + AC.esc(f.kicker) + '</div><h3><a href="advice.html?id=' + f.id + '">' + AC.esc(f.title) + '</a></h3><p>' + AC.esc(f.summary) + '</p>' +
+        '<a class="more" href="advice.html?id=' + f.id + '">Discover more about ' + AC.esc(f.title.toLowerCase()) + '</a></div></div>';
+      $('#tipsCards').innerHTML = A.slice(1, 4).map(function (a) {
+        return '<article class="acard"><a class="img" href="advice.html?id=' + a.id + '" tabindex="-1" aria-hidden="true">' + ART.banner(a.group) + '</a>' +
+          '<div class="kick">' + AC.esc(a.kicker) + '</div><h3><a href="advice.html?id=' + a.id + '">' + AC.esc(a.title) + '</a></h3><p>' + AC.esc(a.summary) + '</p></article>';
+      }).join('');
+    }
   });
 })();

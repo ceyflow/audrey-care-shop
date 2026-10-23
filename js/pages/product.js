@@ -20,13 +20,13 @@
       '<a href="shop.html?kind=' + p.kind + '">' + AC.esc(p.kindObj.name) + '</a>' + SEP + '<span>' + AC.esc(p.name + ' ' + f.name) + '</span>';
 
     var siblings = AC.products.filter(function (x) { return x.name === p.name && x.kind === p.kind; });
-    var views = p.images.length ? p.images.map(function (src, i) { return AC.media(p, i); }) : [AC.media(p, 0), AC.media(p, 1)];
+    var views = p.images.length ? p.images.map(function (src, i) { return AC.media(p, i); }) : [AC.media(p, 0, { plain: true, bg: 'none', scale: 1.28 }), AC.media(p, 1)];
     var thumbs = views.map(function (h, i) { return '<button data-view="' + i + '" aria-label="View image ' + (i + 1) + '" aria-current="' + (i === 0) + '">' + h + '</button>'; }).join('');
     var stage = views.map(function (h, i) { return '<div class="v' + (i === 0 ? ' is-on' : '') + '">' + h + '</div>'; }).join('');
 
     root.innerHTML =
       '<div class="gallery"><div class="stage-wrap"><div class="stage">' +
-        (p.badge ? '<span class="badge' + (p.badge === 'New' ? ' badge--new' : '') + '">' + AC.esc(p.badge) + '</span>' : '') + stage + '</div>' +
+        (p.badge ? '<span class="badge' + (p.badge === 'New' ? ' badge--new' : '') + '">' + AC.esc(p.badge) + '</span>' : '') + stage + '</div><span id="stageBadge"></span>' +
         '<button class="zoom-btn" id="zoomBtn" aria-label="Zoom image">' + ZOOM + '</button></div>' +
         (views.length > 1 ? '<div class="thumbs">' + thumbs + '</div>' : '') + '</div>' +
       '<div class="pdp-info">' +
@@ -60,6 +60,7 @@
       var gone = out(sel);
       addBtn.disabled = gone; addBtn.textContent = gone ? 'Out of stock' : 'Add to bag';
       $('#qVal').textContent = qty;
+      $('#stageBadge').innerHTML = AC.sizeBadge(sel.label);
       $('#stickyName').textContent = p.name + ' · ' + f.name;
       $('#stickyPrice').textContent = sel.label + ' · ' + AC.money(sel.price * qty);
       $('#stickyBtn').disabled = gone;
@@ -117,7 +118,7 @@
 
     /* sticky buy bar: shown whenever the main button is off screen */
     var sticky = $('#stickyBuy'), tick = false;
-    $('#stickyThumb').innerHTML = AC.media(p, 0);
+    $('#stickyThumb').innerHTML = AC.media(p, 0, { plain: true });
     function stickyUpdate() {
       tick = false;
       var r = addBtn.getBoundingClientRect(), vis = r.width > 0;
@@ -143,6 +144,6 @@
     var rel = AC.products.filter(function (x) { return x.id !== p.id && x.kindObj.group === p.kindObj.group; });
     AC.products.forEach(function (x) { if (x.id !== p.id && rel.indexOf(x) < 0 && rel.length < 4) rel.push(x); });
     rel = rel.slice(0, 4);
-    if (rel.length) { $('#relatedSection').hidden = false; $('#related').innerHTML = rel.map(function (x, i) { return AC.card(x, i); }).join(''); AC.reveal(); }
+    if (rel.length) { $('#relatedSection').hidden = false; $('#related').innerHTML = rel.map(function (x) { return AC.card(x); }).join(''); }
   });
 })();

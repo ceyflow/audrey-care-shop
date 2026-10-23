@@ -1,6 +1,6 @@
 /*
- * Shared header and footer. Loaded synchronously right after <body> opens so the header is in
- * place before first paint (no layout shift). Edit navigation links here.
+ * Shared header, menus and footer. Loaded synchronously right after <body> opens so the header
+ * is in place before first paint. Edit navigation links here.
  */
 (function () {
   var C = window.AC_CONFIG, D = window.AC_DATA;
@@ -39,13 +39,13 @@
   };
   window.AC_ICON = function (n) { return I[n] || ''; };
 
-  function brand(extra) {
+  function brand() {
     return '<a class="brand" href="index.html" aria-label="' + C.SITE_NAME + ' home">' + I.logo +
       '<span class="brand-name">Audrey Care<small>Gentle everyday care</small></span></a>';
   }
-
-  /* ---------- header ---------- */
   var ARROW = I.arrow.replace('<svg', '<svg class="arr"');
+
+  /* ---------- Products mega menu: category rail, browse columns, promo ---------- */
   var rail = '<a class="mm-all" href="shop.html">See all ' + ARROW + '</a>' + D.groups.map(function (g, i) {
     return '<a class="mm-cat' + (i === 0 ? ' is-active' : '') + '" data-cat="' + g.id + '" href="shop.html?group=' + g.id + '">' + g.name + '</a>';
   }).join('');
@@ -59,8 +59,8 @@
       }).join('') + '</div>' +
       '<div class="mm-col"><h4>Browse</h4><a href="shop.html?group=' + g.id + '&amp;badge=Bestseller">Bestsellers</a><a href="shop.html?group=' + g.id + '&amp;badge=New">New in</a><a href="bulk.html">Bulk orders</a></div>' +
       '<div class="mm-promo"><a class="mm-img" href="shop.html?group=' + g.id + '" tabindex="-1" aria-hidden="true">' + window.AC_ART.banner(g.id) + '</a>' +
-        '<a class="mm-link" href="index.html#scents">Find your scent ' + ARROW + '</a><p>Four fragrances, across the whole range.</p><hr>' +
-        kinds.map(function (k) { return '<a class="mm-disc" href="shop.html?kind=' + k.id + '">Shop ' + k.name + ' ' + ARROW + '</a>'; }).join('') + '</div></div>';
+        '<a class="mm-link" href="quiz.html">Take the fragrance quiz ' + ARROW + '</a><p>Find the scent that feels like you.</p><hr>' +
+        kinds.map(function (k) { return '<a class="mm-disc" href="shop.html?kind=' + k.id + '">Discover ' + k.name + ' ' + ARROW + '</a>'; }).join('') + '</div></div>';
   }).join('');
 
   var scentHtml = D.fragrances.map(function (f) {
@@ -69,9 +69,7 @@
       window.AC_ART.packshot(p, { view: 'alt', scale: 1.1 }) + '</div><b>' + f.name + '</b><span>' + f.note + '</span></a>';
   }).join('');
 
-  var featured = D.products[0];
   var wa = C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">WhatsApp us ' + I.right + '</a>' : '';
-
   var mnavFoot = (C.PHONE ? '<a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + C.PHONE + '</a>' : '') +
     (C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '">Chat on WhatsApp</a>' : '') +
     (C.EMAIL ? '<a href="mailto:' + C.EMAIL + '">' + C.EMAIL + '</a>' : '');
@@ -83,22 +81,25 @@
         '<nav aria-label="Site"><a class="' + (page === 'home' ? 'is-current' : '') + '" href="index.html">Audrey Care</a>' +
         '<a class="' + (page === 'bulk' ? 'is-current' : '') + '" href="bulk.html">Bulk orders</a>' +
         '<a class="' + (page === 'about' ? 'is-current' : '') + '" href="about.html">Our story</a></nav>' +
-        '<nav aria-label="Account"><a href="order.html">Track my order ' + I.right + '</a>' + wa + '</nav>' +
+        '<nav aria-label="Account"><a href="order.html">Track my order ' + I.right + '</a><a href="#signup">Sign up &amp; save ' + I.right + '</a>' + wa + '</nav>' +
       '</div></div>' +
       '<div class="mainbar"><div class="wrap mainbar-in">' +
-        '<button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav">' + I.menu + '</button>' +
+        '<button class="icon-btn msearch" id="msearch" aria-label="Search">' + I.search + '</button>' +
         brand() +
         '<nav class="mainnav" aria-label="Primary">' +
-          '<button class="navlink' + (page === 'shop' || page === 'product' ? ' is-current' : '') + '" data-mega="shop" aria-expanded="false" aria-controls="mega">Products ' + I.down + '</button>' +
-          '<button class="navlink" data-mega="scent" aria-expanded="false" aria-controls="mega">Fragrances ' + I.down + '</button>' +
-          '<a class="navlink' + (page === 'bulk' ? ' is-current' : '') + '" href="bulk.html">Bulk orders</a>' +
-          '<a class="navlink' + (page === 'about' ? ' is-current' : '') + '" href="about.html">Our story</a>' +
+          '<div class="nav-item"><button class="navlink" data-mega="shop" aria-expanded="false" aria-controls="mega">Products ' + I.down + '</button></div>' +
+          '<div class="nav-item"><button class="navlink" data-mega="scent" aria-expanded="false" aria-controls="mega">Fragrances ' + I.down + '</button></div>' +
+          '<div class="nav-item"><a class="navlink" href="advice.html">Advice</a></div>' +
+          '<div class="nav-item"><a class="navlink" href="quiz.html">Quizzes</a></div>' +
         '</nav>' +
         '<div class="search" id="search" role="search"><form action="shop.html" method="get" autocomplete="off">' +
-          '<input type="search" name="q" id="searchInput" placeholder="Type something here…" aria-label="Search products" aria-autocomplete="list" aria-controls="searchResults">' +
+          '<input type="search" name="q" id="searchInput" placeholder="Type something here..." aria-label="Search products" aria-autocomplete="list" aria-controls="searchResults">' +
           '<button type="submit" aria-label="Search">' + I.search + '</button></form>' +
           '<div class="search-results" id="searchResults" role="listbox"></div></div>' +
-        '<button class="icon-btn cart-btn" id="cartBtn" aria-label="Open bag">' + I.bag + '<span class="cart-count" id="cartCount">0</span></button>' +
+        '<div style="display:flex;align-items:center">' +
+          '<button class="icon-btn cart-btn" id="cartBtn" aria-label="Open bag">' + I.bag + '<span class="cart-count" id="cartCount">0</span></button>' +
+          '<button class="icon-btn burger" id="burger" aria-label="Open main navigation menu" aria-expanded="false" aria-controls="mnav">' + I.menu + '</button>' +
+        '</div>' +
       '</div>' +
       '<div class="mega" id="mega"><button class="mm-close" id="mmClose" aria-label="Close menu">' + I.close + '</button><div class="wrap">' +
         '<div class="mega-panel mega-panel--shop" data-panel="shop"><nav class="mm-rail" aria-label="Product categories">' + rail + '</nav><div class="mm-sets">' + sets + '</div></div>' +
@@ -106,23 +107,22 @@
       '</div></div></div>' +
     '</header>' +
     '<aside class="mnav" id="mnav" aria-label="Menu" aria-hidden="true">' +
-      '<div class="mnav-top">' + brand() + '<button class="icon-btn" id="mnavClose" aria-label="Close menu">' + I.close + '</button></div>' +
-      '<form action="shop.html" method="get"><input type="search" name="q" placeholder="Type something here…" aria-label="Search products"><button class="icon-btn" aria-label="Search" type="submit">' + I.search + '</button></form>' +
+      '<div class="mnav-top"><button class="icon-btn" id="mnavClose" aria-label="Close menu">' + I.close + '</button></div>' +
+      '<form action="shop.html" method="get"><input type="search" id="mnavSearch" name="q" placeholder="Type something here..." aria-label="Search products"><button class="icon-btn" aria-label="Search" type="submit">' + I.search + '</button></form>' +
       '<div class="mnav-list">' +
         '<details><summary>Products ' + I.down + '</summary><div>' +
           D.kinds.map(function (k) { return '<a href="shop.html?kind=' + k.id + '">' + k.name + '</a>'; }).join('') +
-          '<a href="shop.html" style="color:var(--green-600)">Shop all</a></div></details>' +
+          '<a href="shop.html" style="color:var(--brand)">See all</a></div></details>' +
         '<details><summary>Fragrances ' + I.down + '</summary><div>' +
           D.fragrances.map(function (f) { return '<a href="shop.html?scent=' + f.id + '"><span class="dot" style="background:' + f.color + '"></span>' + f.name + '</a>'; }).join('') +
           '</div></details>' +
-        '<a href="bulk.html">Bulk orders</a><a href="about.html">Our story</a><a href="contact.html">Contact</a><a href="order.html">Track my order</a>' +
+        '<a href="advice.html">Advice</a><a href="quiz.html">Quizzes</a><a href="bulk.html">Bulk orders</a><a href="about.html">Our story</a><a href="order.html">Track my order</a>' +
       '</div>' +
       (mnavFoot ? '<div class="mnav-foot">' + mnavFoot + '</div>' : '') +
     '</aside>' +
     '<div class="scrim" id="scrim"></div>';
 
-  var host = document.currentScript;
-  host.insertAdjacentHTML('afterend', header);
+  document.currentScript.insertAdjacentHTML('afterend', header);
 
   /* ---------- footer ---------- */
   var contactBits = [
@@ -132,17 +132,17 @@
     C.WHATSAPP_NUMBER ? '<li><a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">WhatsApp</a></li>' : ''
   ].join('');
 
-  var footer =
+  window.AC_FOOTER_HTML =
     '<footer class="footer"><div class="wrap"><div class="footer-grid">' +
-      '<div>' + brand() + '<p>Gentle shampoos, body care and fragrances for everyday life. Available for delivery across Sri Lanka, and in bulk for hotels and spas.</p>' +
+      '<div id="signup"><h4>Sign up &amp; save</h4><p class="fine">Be the first to know about new fragrances, launches and offers. No spam, unsubscribe any time. By signing up you agree to our <a href="policies.html#privacy" style="text-decoration:underline">Privacy policy</a>.</p>' +
+        '<form class="nl-form" id="nlForm" novalidate><label for="nlEmail">Enter your email address</label><input id="nlEmail" type="email" name="email" required autocomplete="email">' +
+        '<input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn btn--sm" type="submit">Sign me up</button></form><p class="nl-note" id="nlNote" role="status"></p>' +
         '<div class="pay-row"><span>Cash on delivery</span><span>Bank transfer</span><span>Debit &amp; credit cards</span></div></div>' +
       '<div><h4>Shop</h4><ul>' + D.kinds.map(function (k) { return '<li><a href="shop.html?kind=' + k.id + '">' + k.name + '</a></li>'; }).join('') + '</ul></div>' +
-      '<div><h4>Company</h4><ul><li><a href="about.html">Our story</a></li><li><a href="bulk.html">Bulk orders</a></li><li><a href="contact.html">Contact us</a></li><li><a href="order.html">Track my order</a></li></ul></div>' +
+      '<div><h4>Company</h4><ul><li><a class="link-arrow" href="bulk.html">Bulk orders ' + ARROW + '</a></li><li><a href="about.html">Our story</a></li><li><a href="advice.html">Advice</a></li><li><a href="quiz.html">Quizzes</a></li><li><a href="contact.html">Contact us</a></li><li><a href="order.html">Track my order</a></li></ul></div>' +
       '<div><h4>Get in touch</h4><ul>' + (contactBits || '<li><a href="contact.html">Send us a message</a></li>') + '</ul></div>' +
     '</div>' +
     '<div class="footer-bottom"><span>© ' + new Date().getFullYear() + ' ' + C.SITE_NAME + '. All rights reserved.</span>' +
       '<nav aria-label="Legal"><a href="policies.html#delivery">Delivery</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a><a href="policies.html#terms">Terms</a></nav></div>' +
     '</div></footer>';
-
-  window.AC_FOOTER_HTML = footer;
 })();

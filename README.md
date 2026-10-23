@@ -9,9 +9,10 @@ There is no build step. The site is plain HTML, CSS and JavaScript, so any stati
 ```
 index.html  shop.html  product.html  checkout.html  order.html
 bulk.html   about.html  contact.html  policies.html  404.html
+advice.html (tips list + articles)   quiz.html (find-your-fragrance quiz)
 css/styles.css           design system (colours, type, animation)
 js/config.js             ← your settings (Supabase keys, contact details, bank details)
-js/data.js               sample catalogue (placeholder products)
+js/data.js               sample catalogue + advice articles (placeholder content)
 js/art.js                generated placeholder product artwork
 js/layout.js             header, mega menu and footer (edit navigation here)
 js/app.js                cart, search, drawer, API calls
@@ -154,13 +155,20 @@ private link shown after checkout also lets them upload a bank slip.
 
 ## 4. Changing the look
 
-- **Colours:** the `:root` block at the top of `css/styles.css` (deep green `--green-900` is the main brand colour).
-- **Fonts:** Fraunces (italic headlines) and Inter (text), self-hosted in `assets/fonts/` (SIL Open Font License).
-- **Hero slides:** text in `index.html`; artwork in `js/art.js`. For real photography, replace the `data-art` blocks
-  in `index.html` with `<img src="assets/hero-1.jpg" alt="">` (landscape, about 1600×1400; it's clipped to the curved
-  edge automatically).
+The design follows the structure and motion of a premium beauty storefront: a fixed 1120px column, a
+static two-tier header, a click-to-open mega menu, flat square buttons that invert on hover, and almost no
+animation (no scroll effects, no hover zoom; the hero swaps slides instantly and doesn't autoplay).
+
+- **Colours:** the `:root` block at the top of `css/styles.css`. `--brand` (deep green) is the main colour,
+  `--gold` is the accent under the open menu item.
+- **Fonts:** Figtree (text, a close stand-in for the reference's paid typeface) and Fraunces (italic accents),
+  both self-hosted in `assets/fonts/` (SIL Open Font License).
+- **Hero slides:** text in `index.html`; artwork in `js/art.js`. For real photography, replace the `data-art`
+  blocks with `<div class="art-clip"><img src="assets/hero-1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>`
+  (landscape, about 1000×800; the curved edge is applied automatically).
 - **Menu and footer:** `js/layout.js`.
-- **Motion:** respects the visitor's "reduce motion" setting automatically.
+- **Advice articles and quiz:** articles live in `js/data.js` (`articles`); the quiz is `js/pages/quiz.js`.
+  The article text is **draft copy**: review and replace it.
 
 ## 5. How it's protected
 

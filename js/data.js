@@ -177,6 +177,49 @@ window.AC_DATA = {
     }
   ],
 
+
+  /* Advice articles (Tips & ideas). DRAFT copy: review and replace with your own. */
+  articles: [
+    {
+      id: 'choose-a-fragrance', group: 'body', kicker: 'Fragrance',
+      title: 'How to choose a fragrance you’ll love',
+      summary: 'Fresh, sweet, calm or crisp: a quick guide to picking a scent for every mood and every room.',
+      body: [
+        'Fragrance is personal, and the easiest way to choose is to think about when you’ll use the product. A morning shower often calls for something fresh and bright; an evening bath for something softer.',
+        'Strawberry is sweet and cheerful. Lavender is calm and soft. Apple is crisp and clean, and Ocean Breeze is light and airy. If you’re unsure, start with the one that sounds most like the way you want to feel.',
+        'Matching scents across your routine, say a shampoo, shower gel and body lotion in the same fragrance, makes the whole routine feel like one experience. Or mix them: there’s no wrong answer.'
+      ]
+    },
+    {
+      id: 'hand-washing-well', group: 'hands', kicker: 'Hands',
+      title: 'Hand washing, done well',
+      summary: 'A simple routine that takes about twenty seconds and leaves hands clean and comfortable.',
+      body: [
+        'Wet your hands with clean running water and pump a little hand wash into your palm. Rub your hands together to build a lather, covering the backs of your hands, between your fingers and under your nails.',
+        'Keep going for about 20 seconds, then rinse well and dry thoroughly with a clean towel. Drying matters: damp skin is more likely to feel tight and uncomfortable.',
+        'A pump bottle by every sink makes the habit easy to keep, whether that’s at home, in the kitchen or in a guest bathroom.'
+      ]
+    },
+    {
+      id: 'make-bath-time-last', group: 'body', kicker: 'Body',
+      title: 'Make bath time last',
+      summary: 'Small touches that turn an ordinary bath into a proper moment to slow down.',
+      body: [
+        'Add a capful of bubble bath under the running tap rather than into still water, so the bubbles build properly. Keep the water comfortably warm rather than very hot, which is kinder to your skin.',
+        'Switch off bright lights, put your phone out of reach and give yourself a set amount of time. Afterwards, pat your skin dry and smooth on body lotion while it’s still slightly damp.'
+      ]
+    },
+    {
+      id: 'conditioner-basics', group: 'hair', kicker: 'Hair',
+      title: 'Conditioner basics: where to apply it and how long to leave it',
+      summary: 'Where conditioner goes, how much to use and why rinsing thoroughly makes a difference.',
+      body: [
+        'After shampooing, squeeze the water from your hair and apply conditioner from the mid-lengths to the ends, where hair is driest. Keep it away from your roots if your scalp tends to get oily.',
+        'Comb it through gently with your fingers or a wide-tooth comb, leave it for a minute or two, then rinse thoroughly so nothing is left behind.'
+      ]
+    }
+  ],
+
   /* Options on the Bulk orders enquiry form. */
   bulk: {
     sizes: ['5 L can', 'Something else (tell us below)'],

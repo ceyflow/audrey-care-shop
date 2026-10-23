@@ -142,22 +142,49 @@
     return null;
   };
 
-  AC.media = function (p, view) {
+  AC.media = function (p, view, opts) {
     var src = p.images[view] || (view ? null : p.images[0]);
     if (src) return '<img src="' + AC.esc(src) + '" alt="' + AC.esc(p.name + ' ' + p.frag.name) + '" loading="lazy">';
-    return ART.packshot(p, { view: view ? 'alt' : '' });
+    var o = { view: view ? 'alt' : '' }; if (opts) for (var k in opts) o[k] = opts[k];
+    return ART.packshot(p, o);
   };
 
-  AC.card = function (p, i) {
-    var single = p.variants.length === 1;
-    var badge = p.badge ? '<span class="badge' + (p.badge === 'New' ? ' badge--new' : '') + '">' + AC.esc(p.badge) + '</span>' : '';
-    return '<article class="card reveal" style="--d:' + (i || 0) + '"><div class="card-media">' + badge +
-      '<div class="v v-main">' + AC.media(p, 0) + '</div><div class="v v-alt">' + AC.media(p, 1) + '</div>' +
-      '<button class="btn btn--sm btn--block quick" data-quick="' + p.id + '" tabindex="-1">' + (single ? 'Quick add' : 'Choose size') + '</button></div>' +
-      '<div class="card-body"><div class="card-kind"><span class="dot" style="background:' + p.frag.color + ';width:9px;height:9px;margin-right:8px"></span>' + AC.esc(p.kindObj.name) + ' · ' + AC.esc(p.frag.name) + '</div>' +
-      '<h3 class="card-name"><a href="product.html?id=' + p.id + '">' + AC.esc(p.name) + '</a></h3>' +
-      '<div class="card-price">' + (p.variants.length > 1 ? 'From ' : '') + AC.money(p.from) + '</div></div></article>';
+  /* "250 ml" -> big number over a small unit, like the reference's black size badge */
+  AC.sizeBadge = function (label) {
+    var m = String(label).match(/^\s*([\d.,]+)\s*(.*)$/);
+    return m ? '<span class="size-badge"><span><b>' + AC.esc(m[1]) + '</b><small>' + AC.esc(m[2]) + '</small></span></span>' : '';
   };
+
+  /* Product card used in grids and carousels: cut-out on white, black size badge, kicker, title, price. */
+  AC.card = function (p) {
+    var single = p.variants.length === 1;
+    var first = p.variants.slice().sort(function (a, b) { return a.price - b.price; })[0];
+    return '<article class="pcard card"><a class="pcard-img" href="product.html?id=' + p.id + '" tabindex="-1" aria-hidden="true">' + AC.media(p, 0, { plain: true }) + AC.sizeBadge(first.label) + '</a>' +
+      '<div class="pcard-body"><div class="pcard-kind">' + AC.esc(p.kindObj.name) + ' · ' + AC.esc(p.frag.name) + '</div>' +
+      '<h3 class="pcard-title"><a href="product.html?id=' + p.id + '">' + AC.esc(p.name) + ' ' + AC.esc(p.frag.name) + '</a></h3>' +
+      '<div class="pcard-price">' + (p.variants.length > 1 ? 'From ' : '') + AC.money(p.from) + '</div>' +
+      '<button class="btn btn--ghost btn--sm pcard-add" data-quick="' + p.id + '">' + (single ? 'Add to bag' : 'Choose size') + '</button></div></article>';
+  };
+
+  /* Horizontal product carousel: slides 0.5s ease-out, arrows disable at the ends. */
+  AC.carousel = function (root) {
+    var track = root.querySelector('.pcar-track'), prev = root.querySelector('.pcar-arrow.prev'), next = root.querySelector('.pcar-arrow.next');
+    var view = root.querySelector('.pcar-view'), idx = 0;
+    function per() { var c = track.children[0]; if (!c) return 1; return Math.max(1, Math.round((view.clientWidth + 20) / (c.getBoundingClientRect().width + 20))); }
+    function max() { return Math.max(0, track.children.length - per()); }
+    function go(i) {
+      idx = Math.max(0, Math.min(max(), i));
+      var c = track.children[idx]; var x = c ? c.offsetLeft : 0;
+      track.style.transform = 'translateX(' + (-x) + 'px)';
+      prev.disabled = idx <= 0; next.disabled = idx >= max();
+    }
+    prev.onclick = function () { go(idx - per()); };
+    next.onclick = function () { go(idx + per()); };
+    window.addEventListener('resize', function () { go(idx); });
+    go(0);
+    return { go: go, reset: function () { go(0); } };
+  };
+
 
   /* ---------- cart ---------- */
   var CART_KEY = 'ac_cart_v1';
@@ -243,44 +270,36 @@
     if (!m || !m.classList.contains('is-open')) { scrim.classList.remove('is-open'); document.body.classList.remove('is-locked'); }
   }
 
-  /* ---------- mobile nav ---------- */
+  /* ---------- mobile nav (full-screen) ---------- */
   function setMnav(open) {
     var m = $('#mnav'), b = $('#burger');
     m.classList.toggle('is-open', open); m.setAttribute('aria-hidden', open ? 'false' : 'true');
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    scrim.classList.toggle('is-open', open || drawer.classList.contains('is-open'));
-    document.body.classList.toggle('is-locked', open || drawer.classList.contains('is-open'));
+    document.body.classList.toggle('is-locked', open || (drawer && drawer.classList.contains('is-open')));
   }
 
-  /* ---------- mega menu ---------- */
+  /* ---------- mega menu: opens on click, instant, closes on X / Esc / outside click ---------- */
   function initMega() {
-    var mega = $('#mega'), header = $('#siteHeader'), triggers = $$('[data-mega]'), timer, current = null;
+    var mega = $('#mega'), header = $('#siteHeader'), triggers = $$('[data-mega]'), current = null;
     if (!mega) return;
     function open(name) {
-      clearTimeout(timer); current = name;
+      current = name;
       $$('.mega-panel', mega).forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-panel') === name); });
-      triggers.forEach(function (t) { t.setAttribute('aria-expanded', t.getAttribute('data-mega') === name ? 'true' : 'false'); });
+      triggers.forEach(function (t) { var on = t.getAttribute('data-mega') === name; t.setAttribute('aria-expanded', on ? 'true' : 'false'); t.closest('.nav-item').classList.toggle('is-open', on); });
       mega.classList.add('is-open');
     }
     function close() {
-      clearTimeout(timer); current = null; mega.classList.remove('is-open');
-      triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+      current = null; mega.classList.remove('is-open');
+      triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); t.closest('.nav-item').classList.remove('is-open'); });
     }
-    var hoverable = window.matchMedia('(hover: hover)').matches;
     triggers.forEach(function (t) {
       var name = t.getAttribute('data-mega');
       t.addEventListener('click', function () { current === name ? close() : open(name); });
-      if (hoverable) t.addEventListener('mouseenter', function () { clearTimeout(timer); timer = setTimeout(function () { open(name); }, 90); });
     });
-    if (hoverable) {
-      header.addEventListener('mouseleave', function () { clearTimeout(timer); timer = setTimeout(close, 180); });
-      mega.addEventListener('mouseenter', function () { clearTimeout(timer); });
-    }
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     document.addEventListener('click', function (e) { if (current && !header.contains(e.target)) close(); });
     $$('a', mega).forEach(function (a) { a.addEventListener('click', close); });
     var mmClose = $('#mmClose'); if (mmClose) mmClose.addEventListener('click', close);
-    /* category rail: hover or focus switches the columns, like the reference */
     $$('.mm-cat', mega).forEach(function (c) {
       var show = function () {
         var id = c.getAttribute('data-cat');
@@ -343,32 +362,8 @@
     AC.$$('.input,.textarea', form).forEach(function (el) { el.addEventListener('input', function () { var w = el.closest('.field'); w.classList.remove('has-error'); w.querySelector('.err').textContent = ''; }); });
   };
 
-  /* ---------- scroll behaviour ---------- */
-  function initScroll() {
-    var header = $('#siteHeader'), ticking = false;
-    function onScroll() {
-      ticking = false;
-      header.classList.toggle('is-compact', window.scrollY > 12);
-      $$('[data-parallax]').forEach(function (el) {
-        var r = el.parentElement.getBoundingClientRect(), vh = window.innerHeight;
-        if (r.bottom < 0 || r.top > vh) return;
-        var p = (r.top + r.height / 2 - vh / 2) / vh;   // -1..1
-        el.style.setProperty('--py', (p * -28).toFixed(1) + 'px');
-      });
-    }
-    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-    onScroll();
-  }
-
-  var io;
-  AC.reveal = function (root) {
-    var els = $$('.reveal:not(.is-in)', root);
-    if (!('IntersectionObserver' in window) || AC.reduced) { els.forEach(function (e) { e.classList.add('is-in'); }); return; }
-    io = io || new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-    els.forEach(function (e) { io.observe(e); });
-  };
+  /* No scroll animations (header is static; content is always visible). */
+  AC.reveal = function () {};
 
   /* ---------- chat: greeting bubble + orb (WhatsApp when configured, else the contact page) ---------- */
   function initChat() {
@@ -399,6 +394,16 @@
     $('#drawerClose').addEventListener('click', AC.closeCart);
     $('#burger').addEventListener('click', function () { setMnav(true); });
     $('#mnavClose').addEventListener('click', function () { setMnav(false); });
+    $('#msearch').addEventListener('click', function () { setMnav(true); var i = $('#mnavSearch'); if (i) i.focus(); });
+    var nl = $('#nlForm'), note = $('#nlNote');
+    nl.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = nl.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { note.style.color = 'var(--danger)'; note.textContent = 'Please enter a valid email address.'; return; }
+      note.style.color = ''; note.textContent = 'Subscribing…';
+      AC.submitForm('newsletter', { email: email, company: nl.company.value }).then(function () { note.textContent = 'Thank you — you’re on the list.'; nl.reset(); })
+        .catch(function (err) { note.style.color = 'var(--danger)'; note.textContent = err.message; });
+    });
     scrim.addEventListener('click', function () { setMnav(false); AC.closeCart(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setMnav(false); AC.closeCart(); } });
 
@@ -420,7 +425,7 @@
     document.addEventListener('ac:cart', renderCart);
     window.addEventListener('storage', function (e) { if (e.key === CART_KEY) renderCart(); });
 
-    initMega(); initScroll(); initChat();
+    initMega(); initChat();
     AC.reveal();
     AC.ready.then(function () { renderCart(); initSearch(); document.dispatchEvent(new CustomEvent('ac:ready')); });
   }
