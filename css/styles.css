@@ -89,6 +89,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 .brand { display: inline-flex; align-items: center; gap: 10px; flex: none; color: var(--brand); }
 .brand svg { width: 36px; height: 36px; }
+.brand-img { height: 46px; width: auto; max-width: 240px; object-fit: contain; }
 .brand-name { font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 25px; line-height: 1; letter-spacing: -.01em; }
 .brand-name small { display: block; font-family: var(--font-sans); font-style: normal; font-weight: 500; font-size: 9px; letter-spacing: .26em; text-transform: uppercase; color: var(--green-600); margin-top: 4px; }
 
@@ -139,7 +140,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .mm-col a { display: flex; align-items: center; padding: 11px 0; font-size: 16px; line-height: 1.2; color: var(--text); }
 .mm-col a:hover { color: var(--brand); text-decoration: underline; text-underline-offset: 4px; }
 .mm-promo { display: grid; }
-.mm-img { display: block; aspect-ratio: 326 / 182; overflow: hidden; }
+.mm-img { position: relative; display: block; aspect-ratio: 326 / 182; overflow: hidden; }
 .mm-img svg { width: 100%; height: 100%; }
 .mm-link { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 18px; color: var(--brand); }
 .mm-promo p { margin: 10px 0 24px; font-size: 14px; font-weight: 300; letter-spacing: .7px; color: var(--text); }
@@ -208,7 +209,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .explore h2 { font-size: 18px; line-height: 22px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--text); margin-bottom: 68px; }
 .tiles { display: grid; grid-template-columns: repeat(6, 170px); gap: 20px; }
 .tile { display: block; }
-.tile-img { display: block; width: 170px; height: 110px; overflow: hidden; background: #fff; }
+.tile-img { position: relative; display: block; width: 170px; height: 110px; overflow: hidden; background: #fff; }
 .tile-img svg { width: 100%; height: 100%; }
 .tile-name { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 16px; line-height: 24px; color: var(--brand); }
 .tile-name svg { width: 18px; height: 18px; flex: none; }
@@ -262,7 +263,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* Tips / articles */
 .feature { display: grid; grid-template-columns: 550px 1fr; gap: 40px; align-items: center; margin-bottom: 48px; }
-.feature .img { aspect-ratio: 550 / 391; overflow: hidden; }
+.feature .img { position: relative; aspect-ratio: 550 / 391; overflow: hidden; }
 .feature .img svg { width: 100%; height: 100%; }
 .feature .kick, .acard .kick { display: flex; align-items: center; gap: 14px; font-size: 12px; letter-spacing: .7px; text-transform: uppercase; color: var(--text); margin-bottom: 14px; }
 .feature .kick::after, .acard .kick::after { content: ''; flex: 1; height: 1px; background: #bdbdbd; }
@@ -271,7 +272,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .feature .more { display: inline-block; margin-top: 16px; font-size: 14px; font-weight: 700; color: var(--brand); letter-spacing: .4px; }
 .feature .more:hover, .acard h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .acards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 20px; }
-.acard .img { display: block; aspect-ratio: 360 / 209; overflow: hidden; margin-bottom: 16px; }
+.acard .img { position: relative; display: block; aspect-ratio: 360 / 209; overflow: hidden; margin-bottom: 16px; }
 .acard .img svg { width: 100%; height: 100%; }
 .acard h3 { font-size: 20px; line-height: 24px; font-weight: 400; color: var(--brand); margin-bottom: 10px; }
 
@@ -479,7 +480,7 @@ body.has-sticky .chat { bottom: 100px; }
 .cat-row { display: flex; gap: 20px; margin-top: 28px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .cat-row::-webkit-scrollbar { display: none; }
 .cat { flex: 0 0 140px; display: grid; gap: 14px; align-content: start; padding-bottom: 20px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-.cat-img { display: block; width: 140px; height: 120px; overflow: hidden; }
+.cat-img { position: relative; display: block; width: 140px; height: 120px; overflow: hidden; }
 .cat-img svg { width: 100%; height: 100%; }
 .cat-name { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 1.2; letter-spacing: .8px; text-transform: uppercase; color: var(--brand); }
 .cat-name svg { width: 16px; height: 16px; }

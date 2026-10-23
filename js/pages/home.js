@@ -7,10 +7,14 @@
   $$('.pcar-arrow.next').forEach(function (b) { b.innerHTML = I.right; });
 
   /* artwork */
-  $$('[data-art]').forEach(function (el) { el.innerHTML = '<div class="art-clip">' + ART.hero(el.getAttribute('data-art')) + '</div>'; });
-  $('#bannerArt').innerHTML = ART.wide();
-  $('#bandArt').innerHTML = ART.band();
-  $('#splitArt').innerHTML = ART.editorial();
+  var HERO_SLOT = { care: 'hero1', scent: 'hero2', bulk: 'hero3' };
+  $$('[data-art]').forEach(function (el) {
+    var k = el.getAttribute('data-art');
+    el.innerHTML = '<div class="art-clip">' + ART.slot(HERO_SLOT[k], function () { return ART.hero(k); }) + '</div>';
+  });
+  $('#bannerArt').innerHTML = ART.slot('banner', ART.wide);
+  $('#bandArt').innerHTML = ART.slot('band', ART.band);
+  $('#splitArt').innerHTML = ART.slot('split', ART.editorial);
 
   /* ---------- hero: manual, instant swap, no autoplay (as in the reference) ---------- */
   (function () {
@@ -68,11 +72,11 @@
     var A = D.articles || [];
     if (A.length) {
       var f = A[0];
-      $('#tipsFeature').innerHTML = '<div class="feature"><a class="img" href="advice.html?id=' + f.id + '" tabindex="-1" aria-hidden="true">' + ART.banner(f.group) + '</a><div>' +
+      $('#tipsFeature').innerHTML = '<div class="feature"><a class="img" href="advice.html?id=' + f.id + '" tabindex="-1" aria-hidden="true">' + (f.image ? ART.photo(f.image, f.title) : ART.banner(f.group)) + '</a><div>' +
         '<div class="kick">' + AC.esc(f.kicker) + '</div><h3><a href="advice.html?id=' + f.id + '">' + AC.esc(f.title) + '</a></h3><p>' + AC.esc(f.summary) + '</p>' +
         '<a class="more" href="advice.html?id=' + f.id + '">Discover more about ' + AC.esc(f.title.toLowerCase()) + '</a></div></div>';
       $('#tipsCards').innerHTML = A.slice(1, 4).map(function (a) {
-        return '<article class="acard"><a class="img" href="advice.html?id=' + a.id + '" tabindex="-1" aria-hidden="true">' + ART.banner(a.group) + '</a>' +
+        return '<article class="acard"><a class="img" href="advice.html?id=' + a.id + '" tabindex="-1" aria-hidden="true">' + (a.image ? ART.photo(a.image, a.title) : ART.banner(a.group)) + '</a>' +
           '<div class="kick">' + AC.esc(a.kicker) + '</div><h3><a href="advice.html?id=' + a.id + '">' + AC.esc(a.title) + '</a></h3><p>' + AC.esc(a.summary) + '</p></article>';
       }).join('');
     }
