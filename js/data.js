@@ -177,14 +177,10 @@ window.AC_DATA = {
     }
   ],
 
-  /* Bulk / wholesale items shown on the Bulk orders page (enquiry only, not sold in the cart). */
+  /* Options on the Bulk orders enquiry form. */
   bulk: {
-    sizes: ['5 L can', '20 L drum', 'Custom packaging'],
+    sizes: ['5 L can', 'Something else (tell us below)'],
     kinds: ['Shampoo', 'Conditioner', 'Shower Gel', 'Body Lotion', 'Hand Wash', 'Bubble Bath', 'Air Freshener'],
-    tiers: [
-      { qty: '10+ cans',  note: 'Introductory bulk pricing' },
-      { qty: '50+ cans',  note: 'Better rate per litre' },
-      { qty: '200+ cans', note: 'Best rate, dedicated scheduling' }
-    ]
+    types: ['Hotel', 'Resort', 'Spa', 'Restaurant', 'Salon', 'Retailer', 'Other']
   }
 };

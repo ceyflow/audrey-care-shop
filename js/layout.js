@@ -61,6 +61,10 @@
   var featured = D.products[0];
   var wa = C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '" target="_blank" rel="noopener">WhatsApp us ' + I.right + '</a>' : '';
 
+  var mnavFoot = (C.PHONE ? '<a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + C.PHONE + '</a>' : '') +
+    (C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '">Chat on WhatsApp</a>' : '') +
+    (C.EMAIL ? '<a href="mailto:' + C.EMAIL + '">' + C.EMAIL + '</a>' : '');
+
   var header =
     '<a class="skip" href="#main">Skip to content</a>' +
     '<header class="site-header" id="siteHeader">' +
@@ -103,9 +107,7 @@
           '</div></details>' +
         '<a href="bulk.html">Bulk orders</a><a href="about.html">Our story</a><a href="contact.html">Contact</a><a href="order.html">Track my order</a>' +
       '</div>' +
-      '<div class="mnav-foot">' + (C.PHONE ? '<a href="tel:' + C.PHONE.replace(/\s/g, '') + '">' + C.PHONE + '</a>' : '') +
-        (C.WHATSAPP_NUMBER ? '<a href="https://wa.me/' + C.WHATSAPP_NUMBER + '">Chat on WhatsApp</a>' : '') +
-        (C.EMAIL ? '<a href="mailto:' + C.EMAIL + '">' + C.EMAIL + '</a>' : '') + '</div>' +
+      (mnavFoot ? '<div class="mnav-foot">' + mnavFoot + '</div>' : '') +
     '</aside>' +
     '<div class="scrim" id="scrim"></div>';
 

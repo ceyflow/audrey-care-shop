@@ -16,6 +16,15 @@
   AC.find = function (list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; };
   AC.reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Sri Lankan numbers: 07X XXX XXXX, +94 7X XXX XXXX, 947XXXXXXXX -> 07XXXXXXXX ('' if invalid) */
+  AC.normPhone = function (v) {
+    var d = String(v || '').replace(/[^\d+]/g, '');
+    if (d.indexOf('+94') === 0) d = '0' + d.slice(3);
+    else if (d.indexOf('94') === 0 && d.length === 11) d = '0' + d.slice(2);
+    else if (d.length === 9 && d.charAt(0) !== '0') d = '0' + d;
+    return /^0\d{9}$/.test(d) ? d : '';
+  };
+
   var toastTimer;
   AC.toast = function (msg) {
     var t = $('#toast'); if (!t) return;
@@ -292,6 +301,37 @@
     document.addEventListener('click', function (e) { if (!$('#search').contains(e.target)) box.classList.remove('is-open'); });
     input.addEventListener('keydown', function (e) { if (e.key === 'Escape') { box.classList.remove('is-open'); input.blur(); } });
   }
+
+
+  /* ---------- simple validated forms (bulk enquiry, contact) ---------- */
+  AC.bindForm = function (form, type, rules, onDone) {
+    var btn = form.querySelector('[type=submit]'), errBox = form.querySelector('.form-error');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var bad = null, data = {};
+      Object.keys(rules).forEach(function (name) {
+        var f = form.elements[name], wrap = f.closest('.field'), v = (f.value || '').trim(), r = rules[name], msg = '';
+        if (r.req && !v) msg = r.msg || 'This field is required.';
+        else if (v && r.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = 'That email doesn’t look right.';
+        else if (v && r.kind === 'phone' && !AC.normPhone(v)) msg = 'Enter a valid mobile number, like 077 123 4567.';
+        wrap.classList.toggle('has-error', !!msg); wrap.querySelector('.err').textContent = msg;
+        if (msg && !bad) bad = f;
+        data[name] = r.kind === 'phone' && v ? AC.normPhone(v) : v;
+      });
+      if (bad) { bad.focus(); return; }
+      AC.$$('input,select,textarea', form).forEach(function (el) {
+        if (!el.name || el.name in rules || el.type === 'submit' || el.type === 'checkbox') return;
+        data[el.name] = el.value;
+      });
+      AC.$$('input[type=checkbox]:checked', form).forEach(function (el) { (data[el.name] = data[el.name] || []).push(el.value); });
+      btn.disabled = true; var label = btn.textContent; btn.textContent = 'Sending…'; if (errBox) errBox.hidden = true;
+      AC.submitForm(type, data).then(function () { onDone(data); }).catch(function (err) {
+        btn.disabled = false; btn.textContent = label;
+        if (errBox) { errBox.hidden = false; errBox.textContent = err.message || 'Something went wrong. Please try again.'; }
+      });
+    });
+    AC.$$('.input,.textarea', form).forEach(function (el) { el.addEventListener('input', function () { var w = el.closest('.field'); w.classList.remove('has-error'); w.querySelector('.err').textContent = ''; }); });
+  };
 
   /* ---------- scroll behaviour ---------- */
   function initScroll() {

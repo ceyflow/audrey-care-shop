@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulk orders — Audrey Care</title>
+<meta name="description" content="Bulk and wholesale orders for hotels, spas, resorts and businesses. Hand wash, shampoo, shower gel and more in 5 L cans. Request a quote from Audrey Care.">
+<meta name="theme-color" content="#143d2c">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-page="bulk">
+<script src="js/config.js"></script><script src="js/data.js"></script><script src="js/art.js"></script><script src="js/layout.js"></script>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Bulk orders</span></nav>
+      <h1 class="display">Bulk orders, made simple</h1>
+      <p class="lead">For hotels, resorts, spas, restaurants, salons and retailers. Get your favourite Audrey Care products in 5 L cans, in the fragrance you choose.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center reveal"><span class="kicker">How it works</span><h2 class="h2">Three <em>simple</em> steps</h2></div>
+      <ol class="steps3">
+        <li class="reveal"><b>Tell us what you need</b><span class="muted">Fill in the enquiry form with the products, fragrance and rough quantities.</span></li>
+        <li class="reveal" style="--d:1"><b>We send you a quote</b><span class="muted">We’ll get back to you with pricing and timing, usually within one working day.</span></li>
+        <li class="reveal" style="--d:2"><b>We fill, pack &amp; deliver</b><span class="muted">Your order is prepared and delivered to your door.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--tint" id="enquiry">
+    <div class="wrap two">
+      <div class="reveal" style="display:grid;gap:20px;position:sticky;top:120px">
+        <span class="kicker serif-i" style="font-size:24px;color:var(--green-600)">Request a quote</span>
+        <h2 class="h2">Tell us about <em>your business</em></h2>
+        <p class="lead">The more detail you can share, the faster we can quote. Not sure about something? Leave it blank and tell us in the message.</p>
+        <ul class="values">
+          <li><span class="ico" data-icon="drop"></span><div><b>Hand wash, shampoo, shower gel &amp; more</b><span>Our everyday range, in 5 L cans.</span></div></li>
+          <li><span class="ico" data-icon="leaf"></span><div><b>Your choice of fragrance</b><span>Strawberry, Lavender, Apple or Ocean Breeze.</span></div></li>
+          <li><span class="ico" data-icon="chat"></span><div><b>A real person replies</b><span>No automated quotes. We’ll talk through what suits you.</span></div></li>
+        </ul>
+      </div>
+
+      <div class="reveal" style="--d:1" id="formWrap">
+        <form id="bulkForm" class="co-step" novalidate style="margin:0">
+          <div class="form-grid">
+            <div class="field full" data-field="business"><label for="business">Business name</label><input class="input" id="business" name="business" autocomplete="organization"><div class="err" role="alert"></div></div>
+            <div class="field" data-field="contact"><label for="contact">Contact person</label><input class="input" id="contact" name="contact" autocomplete="name"><div class="err" role="alert"></div></div>
+            <div class="field" data-field="btype"><label for="btype">Type of business <small>(optional)</small></label><select class="input" id="btype" name="btype"><option value="">Select…</option></select><div class="err" role="alert"></div></div>
+            <div class="field" data-field="phone"><label for="phone">Mobile number</label><input class="input" id="phone" name="phone" type="tel" autocomplete="tel" placeholder="07X XXX XXXX"><div class="err" role="alert"></div></div>
+            <div class="field" data-field="email"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email"><div class="err" role="alert"></div></div>
+            <div class="field full"><label>What do you need? <small>(choose any)</small></label><div class="checks" id="kinds"></div></div>
+            <div class="field" data-field="size"><label for="size">Pack size <small>(optional)</small></label><select class="input" id="size" name="size"></select><div class="err"></div></div>
+            <div class="field" data-field="quantity"><label for="quantity">Estimated quantity <small>(optional)</small></label><input class="input" id="quantity" name="quantity" placeholder="e.g. 20 cans a month"><div class="err"></div></div>
+            <div class="field full" data-field="message"><label for="message">Anything else? <small>(fragrance, delivery area, timing…)</small></label><textarea class="textarea" id="message" name="message"></textarea><div class="err"></div></div>
+          </div>
+          <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="notice notice--err form-error" role="alert" hidden style="margin-top:16px"></div>
+          <button class="btn btn--block" type="submit" style="margin-top:24px;padding-block:20px">Send enquiry</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/pages/forms.js"></script>
+</body>
+</html>

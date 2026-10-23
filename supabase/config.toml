@@ -1,0 +1,13 @@
+# Minimal Supabase CLI config. The browser calls these functions with the public anon key and
+# PayHere calls payhere-notify with no key at all, so JWT checks are off for all three.
+# (place-order and submit-form validate and rate-limit everything themselves.)
+project_id = "audrey-care-shop"
+
+[functions.place-order]
+verify_jwt = false
+
+[functions.submit-form]
+verify_jwt = false
+
+[functions.payhere-notify]
+verify_jwt = false
