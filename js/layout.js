@@ -4,7 +4,7 @@
  */
 (function () {
   var C = window.AC_CONFIG, D = window.AC_DATA;
-  var page = document.body.getAttribute('data-page') || '';
+  var page = (document.body && document.body.getAttribute('data-page')) || document.documentElement.getAttribute('data-page') || '';
 
   function ic(path, extra) {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"' + (extra || '') + '>' + path + '</svg>';

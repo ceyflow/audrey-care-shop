@@ -84,7 +84,7 @@
     if (st.badges.length) p.set('badge', st.badges.join(','));
     if (st.q) p.set('q', st.q);
     if (st.sort !== 'featured') p.set('sort', st.sort);
-    history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : ''));
+    try { history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : '')); } catch (e) { /* preview frames may refuse */ }
   }
 
   function toggle(arr, v, on) { var i = arr.indexOf(v); if (on && i < 0) arr.push(v); if (!on && i > -1) arr.splice(i, 1); }

@@ -30,7 +30,7 @@
       e.preventDefault();
       var n = $('#lkNo').value.trim().toUpperCase(), ph = AC.normPhone($('#lkPhone').value);
       if (!n || !ph) { lookupForm('Please enter both your order number and a valid mobile number.'); return; }
-      fetchOrder(n, ph).then(function (o) { no = n; token = null; show(o, ph); history.replaceState(null, '', 'order.html?no=' + encodeURIComponent(n)); })
+      fetchOrder(n, ph).then(function (o) { no = n; token = null; show(o, ph); try { history.replaceState(null, '', 'order.html?no=' + encodeURIComponent(n)); } catch (e) { /* ignore */ } })
         .catch(function (err) { lookupForm(err.message); });
     });
   }
