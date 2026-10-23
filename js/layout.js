@@ -45,11 +45,22 @@
   }
 
   /* ---------- header ---------- */
-  var groupsHtml = D.groups.map(function (g) {
+  var ARROW = I.arrow.replace('<svg', '<svg class="arr"');
+  var rail = '<a class="mm-all" href="shop.html">See all ' + ARROW + '</a>' + D.groups.map(function (g, i) {
+    return '<a class="mm-cat' + (i === 0 ? ' is-active' : '') + '" data-cat="' + g.id + '" href="shop.html?group=' + g.id + '">' + g.name + '</a>';
+  }).join('');
+  var sets = D.groups.map(function (g, i) {
     var kinds = D.kinds.filter(function (k) { return k.group === g.id; });
-    return '<div class="mega-col"><h4>' + g.name + '</h4>' +
-      kinds.map(function (k) { return '<a href="shop.html?kind=' + k.id + '">' + k.name + '</a>'; }).join('') +
-      '<a href="shop.html?group=' + g.id + '" style="color:var(--green-600);font-size:15px;margin-top:6px">Shop all ' + g.name.toLowerCase() + '</a></div>';
+    return '<div class="mm-set' + (i === 0 ? ' is-active' : '') + '" data-set="' + g.id + '">' +
+      '<div class="mm-col"><h4>Browse type</h4>' + kinds.map(function (k) { return '<a href="shop.html?kind=' + k.id + '">' + k.name + '</a>'; }).join('') +
+        '<a href="shop.html?group=' + g.id + '">See all ' + g.name.toLowerCase() + '</a></div>' +
+      '<div class="mm-col"><h4>Browse fragrance</h4>' + D.fragrances.map(function (f) {
+        return '<a href="shop.html?group=' + g.id + '&amp;scent=' + f.id + '"><span class="dot" style="background:' + f.color + '"></span>' + f.name + '</a>';
+      }).join('') + '</div>' +
+      '<div class="mm-col"><h4>Browse</h4><a href="shop.html?group=' + g.id + '&amp;badge=Bestseller">Bestsellers</a><a href="shop.html?group=' + g.id + '&amp;badge=New">New in</a><a href="bulk.html">Bulk orders</a></div>' +
+      '<div class="mm-promo"><a class="mm-img" href="shop.html?group=' + g.id + '" tabindex="-1" aria-hidden="true">' + window.AC_ART.banner(g.id) + '</a>' +
+        '<a class="mm-link" href="index.html#scents">Find your scent ' + ARROW + '</a><p>Four fragrances, across the whole range.</p><hr>' +
+        kinds.map(function (k) { return '<a class="mm-disc" href="shop.html?kind=' + k.id + '">Shop ' + k.name + ' ' + ARROW + '</a>'; }).join('') + '</div></div>';
   }).join('');
 
   var scentHtml = D.fragrances.map(function (f) {
@@ -78,7 +89,7 @@
         '<button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav">' + I.menu + '</button>' +
         brand() +
         '<nav class="mainnav" aria-label="Primary">' +
-          '<button class="navlink' + (page === 'shop' || page === 'product' ? ' is-current' : '') + '" data-mega="shop" aria-expanded="false" aria-controls="mega">Shop ' + I.down + '</button>' +
+          '<button class="navlink' + (page === 'shop' || page === 'product' ? ' is-current' : '') + '" data-mega="shop" aria-expanded="false" aria-controls="mega">Products ' + I.down + '</button>' +
           '<button class="navlink" data-mega="scent" aria-expanded="false" aria-controls="mega">Fragrances ' + I.down + '</button>' +
           '<a class="navlink' + (page === 'bulk' ? ' is-current' : '') + '" href="bulk.html">Bulk orders</a>' +
           '<a class="navlink' + (page === 'about' ? ' is-current' : '') + '" href="about.html">Our story</a>' +
@@ -89,9 +100,8 @@
           '<div class="search-results" id="searchResults" role="listbox"></div></div>' +
         '<button class="icon-btn cart-btn" id="cartBtn" aria-label="Open bag">' + I.bag + '<span class="cart-count" id="cartCount">0</span></button>' +
       '</div>' +
-      '<div class="mega" id="mega"><div class="wrap">' +
-        '<div class="mega-panel" data-panel="shop">' + groupsHtml +
-          '<a class="mega-feature" href="product.html?id=' + featured.id + '">' + window.AC_ART.packshot(featured, { view: 'alt', scale: 1.2 }) + '<span>Bestseller</span></a></div>' +
+      '<div class="mega" id="mega"><button class="mm-close" id="mmClose" aria-label="Close menu">' + I.close + '</button><div class="wrap">' +
+        '<div class="mega-panel mega-panel--shop" data-panel="shop"><nav class="mm-rail" aria-label="Product categories">' + rail + '</nav><div class="mm-sets">' + sets + '</div></div>' +
         '<div class="mega-panel mega-panel--scent" data-panel="scent">' + scentHtml + '</div>' +
       '</div></div></div>' +
     '</header>' +
@@ -99,7 +109,7 @@
       '<div class="mnav-top">' + brand() + '<button class="icon-btn" id="mnavClose" aria-label="Close menu">' + I.close + '</button></div>' +
       '<form action="shop.html" method="get"><input type="search" name="q" placeholder="Type something here…" aria-label="Search products"><button class="icon-btn" aria-label="Search" type="submit">' + I.search + '</button></form>' +
       '<div class="mnav-list">' +
-        '<details><summary>Shop ' + I.down + '</summary><div>' +
+        '<details><summary>Products ' + I.down + '</summary><div>' +
           D.kinds.map(function (k) { return '<a href="shop.html?kind=' + k.id + '">' + k.name + '</a>'; }).join('') +
           '<a href="shop.html" style="color:var(--green-600)">Shop all</a></div></details>' +
         '<details><summary>Fragrances ' + I.down + '</summary><div>' +

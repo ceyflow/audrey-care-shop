@@ -7,7 +7,7 @@
   $('#railPrev').innerHTML = I.left; $('#railNext').innerHTML = I.right;
 
   /* hero artwork */
-  $$('[data-art]').forEach(function (el) { el.innerHTML = ART.hero(el.getAttribute('data-art')); });
+  $$('[data-art]').forEach(function (el) { el.innerHTML = '<div class="art-clip">' + ART.hero(el.getAttribute('data-art')) + '</div>'; });
   $('#editorialArt').innerHTML = ART.editorial();
   $('#bandArt').innerHTML = ART.band();
 

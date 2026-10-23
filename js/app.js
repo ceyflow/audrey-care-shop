@@ -279,6 +279,16 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     document.addEventListener('click', function (e) { if (current && !header.contains(e.target)) close(); });
     $$('a', mega).forEach(function (a) { a.addEventListener('click', close); });
+    var mmClose = $('#mmClose'); if (mmClose) mmClose.addEventListener('click', close);
+    /* category rail: hover or focus switches the columns, like the reference */
+    $$('.mm-cat', mega).forEach(function (c) {
+      var show = function () {
+        var id = c.getAttribute('data-cat');
+        $$('.mm-cat', mega).forEach(function (x) { x.classList.toggle('is-active', x === c); });
+        $$('.mm-set', mega).forEach(function (x) { x.classList.toggle('is-active', x.getAttribute('data-set') === id); });
+      };
+      c.addEventListener('mouseenter', show); c.addEventListener('focus', show);
+    });
   }
 
   /* ---------- search ---------- */
@@ -360,16 +370,21 @@
     els.forEach(function (e) { io.observe(e); });
   };
 
-  /* ---------- chat (WhatsApp) ---------- */
+  /* ---------- chat: greeting bubble + orb (WhatsApp when configured, else the contact page) ---------- */
   function initChat() {
-    if (!C.WHATSAPP_NUMBER) return;
-    var url = 'https://wa.me/' + C.WHATSAPP_NUMBER + '?text=' + encodeURIComponent('Hi ' + C.SITE_NAME + ', I have a question.');
+    var url = C.WHATSAPP_NUMBER ? 'https://wa.me/' + C.WHATSAPP_NUMBER + '?text=' + encodeURIComponent('Hi ' + C.SITE_NAME + ', I have a question.') : 'contact.html';
+    var ext = C.WHATSAPP_NUMBER ? ' target="_blank" rel="noopener"' : '';
+    var ring = '<svg viewBox="0 0 84 84" fill="none" stroke="currentColor" aria-hidden="true"><ellipse cx="42" cy="42" rx="34" ry="31" transform="rotate(-24 42 42)" stroke-width="4.500"/><ellipse cx="42" cy="42" rx="31" ry="34" transform="rotate(32 42 42)" stroke-width="2.500" opacity=".65"/></svg>';
     document.body.insertAdjacentHTML('beforeend',
-      '<div class="chat" id="chat"><div class="chat-bubble" id="chatBubble" role="note">Hi, how may I help you?<button aria-label="Dismiss" id="chatX">' + I.close + '</button></div>' +
-      '<a class="chat-fab" href="' + url + '" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">' + I.chat + '</a></div>');
+      '<div class="chat" id="chat"><button class="chat-x" id="chatX" aria-label="Dismiss">' + I.close + '</button>' +
+      '<a class="chat-bubble" id="chatBubble" href="' + url + '"' + ext + '>Hi, how may I help you?</a>' +
+      '<a class="chat-fab" href="' + url + '"' + ext + ' aria-label="' + (C.WHATSAPP_NUMBER ? 'Chat with us on WhatsApp' : 'Contact us') + '">' + ring + '</a></div>');
     var chat = $('#chat'), seen = false;
     try { seen = sessionStorage.getItem('ac_chat_seen') === '1'; } catch (e) { /* ignore */ }
-    if (!seen) setTimeout(function () { chat.classList.add('is-greeting'); }, 4500);
+    if (!seen) {
+      setTimeout(function () { chat.classList.add('is-greeting'); }, 2500);
+      setTimeout(function () { chat.classList.remove('is-greeting'); }, 14000);   // fades away on its own so it never covers the page for long
+    }
     $('#chatX').addEventListener('click', function () {
       chat.classList.remove('is-greeting'); try { sessionStorage.setItem('ac_chat_seen', '1'); } catch (e) { /* ignore */ }
     });

@@ -15,18 +15,18 @@
 <script src="js/config.js"></script><script src="js/data.js"></script><script src="js/art.js"></script><script src="js/layout.js"></script>
 
 <main id="main">
-  <section class="page-hero">
-    <div class="wrap">
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span id="crumbNow">Shop</span></nav>
-      <h1 class="display" id="shopTitle">All products</h1>
-      <p class="lead" id="shopLead">Gentle everyday care for hair, body, hands and home.</p>
-    </div>
-  </section>
+  <div class="wrap" style="padding-top:34px"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">›</span><span id="crumbNow">Products</span></nav></div>
 
-  <section class="wrap">
+  <div class="wrap"><div class="cat-row" id="groupChips" role="group" aria-label="Category"></div></div>
+
+  <div class="wrap">
+    <section class="shop-intro">
+      <h1 class="page-title" id="shopTitle">All products</h1>
+      <div class="page-desc" id="shopLead"></div>
+    </section>
+
     <div class="shop-bar">
       <div style="display:grid;gap:14px">
-        <div class="chips" id="groupChips" role="group" aria-label="Category"></div>
         <div class="chips" id="kindChips" role="group" aria-label="Product type" hidden></div>
         <div class="chips" id="scentChips" role="group" aria-label="Fragrance"></div>
       </div>
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="grid" id="grid" aria-live="polite" style="margin-bottom:clamp(64px,8vw,120px)"></div>
-  </section>
+  </div>
 </main>
 
 <script src="js/app.js"></script>

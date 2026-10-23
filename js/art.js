@@ -224,9 +224,9 @@
       return heroSvg(function (id) {
         return leaf(560, 90, 1.6, -28, '#7CBF93', 0.55) + leaf(-30, 560, 1.9, -50, '#8CCBA0', 0.5) + leaf(640, 560, 1.3, 36, '#6FB488', 0.45) +
           '<circle cx="470" cy="420" r="250" fill="#fff" opacity=".28"/>' +
-          placed(id, 'bottle', '#5FA83C', 'Shampoo', 'Apple', 96, 270, 1.6, -9) +
-          placed(id, 'pump', '#8A74C2', 'Body Lotion', 'Lavender', 290, 150, 2.0, 0) +
-          placed(id, 'bar', '#7CBF93', '', '', 560, 297, 1.3, 10);
+          placed(id, 'bottle', '#5FA83C', 'Shampoo', 'Apple', 120, 237, 1.45, -9) +
+          placed(id, 'pump', '#8A74C2', 'Body Lotion', 'Lavender', 285, 124, 1.8, 0) +
+          placed(id, 'bar', '#7CBF93', '', '', 535, 304, 1.2, 10);
       }, '#E3F3E8', '#B9DEC6');
     },
     scent: function () {
@@ -236,7 +236,7 @@
         out += motif('strawberry', fr[0].color, 160, 150, 1.15, -12, 0.3) + motif('lavender', fr[1].color, 760, 160, 1.3, 14, 0.3) +
                motif('apple', fr[2].color, 130, 690, 1.05, 10, 0.28) + motif('ocean-breeze', fr[3].color, 720, 670, 1.2, -6, 0.32);
         for (i = 0; i < 4; i++) {
-          out += placed(id, types[i], fr[i].color, kinds[i], fr[i].name, xs[i], 230 + (i % 2) * 46, 1.5, (i - 1.5) * 4);
+          out += placed(id, types[i], fr[i].color, kinds[i], fr[i].name, xs[i], 190 + (i % 2) * 36, 1.5, (i - 1.5) * 4);
         }
         return out;
       }, '#F1ECF8', '#DDEAF2');
@@ -245,9 +245,9 @@
       return heroSvg(function (id) {
         return leaf(-20, 120, 1.7, 40, '#E2C48F', 0.55) + leaf(620, 600, 1.8, -30, '#D9B678', 0.5) +
           '<circle cx="450" cy="420" r="260" fill="#fff" opacity=".3"/>' +
-          placed(id, 'can', '#2F8A57', 'Hand Wash', '', 70, 250, 1.65, -4) +
-          placed(id, 'can', '#2F8FAE', 'Shower Gel', '', 470, 200, 1.9, 4) +
-          placed(id, 'pump', '#B5651D', 'Body Lotion', 'Lavender', 340, 440, 1.05, 0);
+          placed(id, 'can', '#2F8A57', 'Hand Wash', '', 100, 215, 1.5, -4) +
+          placed(id, 'can', '#2F8FAE', 'Shower Gel', '', 470, 170, 1.7, 4) +
+          placed(id, 'pump', '#B5651D', 'Body Lotion', 'Lavender', 345, 345, 1.05, 0);
       }, '#F6EBD8', '#E6CFA6');
     }
   };
@@ -260,6 +260,43 @@
         placed(id, 'can', '#2F8FAE', 'Shower Gel', '', 440, 110, 1.6, 3) +
         placed(id, 'bottle', '#8A74C2', 'Shampoo', 'Lavender', 620, 250, 1.2, 5);
     }, '#F6EBD8', '#E6CFA6', '0 0 900 600');
+  }
+
+
+  /* ---------- public: category tile (348 x 300) and menu banner (480 x 270) ---------- */
+  var TILE = {
+    all:   { bg: '#143d2c' },
+    hair:  { bg: '#37B98E', item: ['bottle', '#8A74C2', 'Shampoo', 'Lavender'] },
+    body:  { bg: '#F27D8A', item: ['pump', '#2F8FAE', 'Body Lotion', 'Ocean Breeze'] },
+    hands: { bg: '#F2B632', item: ['pump', '#5FA83C', 'Hand Wash', 'Apple'] },
+    home:  { bg: '#46B3C8', item: ['spray', '#8A74C2', 'Air Freshener', 'Lavender'] },
+    bulk:  { bg: '#E58A3C', item: ['can', '#2F8A57', 'Hand Wash', ''] }
+  };
+  function tile(g) {
+    var st = TILE[g] || TILE.all, id = 't' + (++uid), inner;
+    if (g === 'all' || !TILE[g]) {
+      inner = '<g transform="translate(174 150) scale(4.4) translate(-20 -20)"><path d="M5 30C5 15 15 5 35 5c0 17-9 29-24 29-3 0-5-1-6-4z" fill="#fff"/><path d="M7 33c5-9 12-16 22-22" stroke="' + st.bg + '" stroke-width="2.2" stroke-linecap="round" fill="none"/></g>';
+    } else {
+      inner = '<circle cx="174" cy="150" r="118" fill="#fff" opacity=".18"/>' + placed(id, st.item[0], st.item[1], st.item[2], st.item[3], 86, 14, 0.88, 0);
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 348 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+      '<defs><radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+      '<rect width="348" height="300" fill="' + st.bg + '"/>' + inner + '</svg>';
+  }
+
+  var BANNER = {
+    hair:  { a: '#E3F4EC', b: '#BFE4D3', items: [['bottle', '#8A74C2', 'Shampoo', 'Lavender', 36, 20, 0.8, -5], ['bottle', '#5FA83C', 'Shampoo', 'Apple', 160, 10, 0.86, 0], ['bottle', '#D9566B', 'Conditioner', 'Strawberry', 292, 22, 0.8, 5]] },
+    body:  { a: '#FDE9EC', b: '#F6C4CB', items: [['pump', '#2F8FAE', 'Shower Gel', 'Ocean Breeze', 36, 20, 0.8, -5], ['pump', '#8A74C2', 'Body Lotion', 'Lavender', 160, 10, 0.86, 0], ['bubble', '#D9566B', 'Bubble Bath', 'Strawberry', 292, 22, 0.8, 5]] },
+    hands: { a: '#FFF3D6', b: '#F8DC93', items: [['pump', '#5FA83C', 'Hand Wash', 'Apple', 96, 14, 0.84, -4], ['pump', '#8A74C2', 'Hand Wash', 'Lavender', 228, 14, 0.84, 4]] },
+    home:  { a: '#E1F3F7', b: '#B5DEE8', items: [['spray', '#2F8FAE', 'Air Freshener', 'Ocean Breeze', 96, 14, 0.84, -4], ['spray', '#8A74C2', 'Air Freshener', 'Lavender', 228, 14, 0.84, 4]] }
+  };
+  function banner(g) {
+    var b = BANNER[g] || BANNER.hair, id = 'b' + (++uid);
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + b.a + '"/><stop offset="1" stop-color="' + b.b + '"/></linearGradient>' +
+      '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+      '<rect width="480" height="270" fill="url(#' + id + ')"/>' +
+      b.items.map(function (i) { return placed(id, i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]); }).join('') + '</svg>';
   }
 
   /* ---------- public: editorial collage (arch, 600 x 760) ---------- */
@@ -276,5 +313,5 @@
       '</svg>';
   }
 
-  window.AC_ART = { packshot: packshot, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
+  window.AC_ART = { packshot: packshot, tile: tile, banner: banner, band: band, hero: function (k) { return (HERO[k] || HERO.care)(); }, editorial: editorial, motif: motif, shade: shade, shape: shape, esc: esc };
 })();

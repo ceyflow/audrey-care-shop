@@ -2,7 +2,7 @@
   var AC = window.AC, $ = AC.$, D = window.AC_DATA;
   var st = {
     group: AC.param('group') || '', kind: AC.param('kind') || '', scent: AC.param('scent') || '',
-    q: (AC.param('q') || '').trim(), sort: AC.param('sort') || 'featured'
+    q: (AC.param('q') || '').trim(), sort: AC.param('sort') || 'featured', badge: AC.param('badge') || ''
   };
 
   /* a chosen product type implies its group */
@@ -14,8 +14,12 @@
   }
 
   function renderChips() {
-    $('#groupChips').innerHTML = chip('All', !st.group, 'data-group=""') +
-      D.groups.map(function (g) { return chip(g.name, st.group === g.id, 'data-group="' + g.id + '"'); }).join('');
+    var ARROW = window.AC_ICONS.arrow;
+    var tiles = [{ id: '', name: 'All' }].concat(D.groups);
+    $('#groupChips').innerHTML = tiles.map(function (g) {
+      return '<a class="cat' + (st.group === g.id ? ' is-active' : '') + '" href="shop.html' + (g.id ? '?group=' + g.id : '') + '" data-group="' + g.id + '">' +
+        '<span class="cat-img">' + window.AC_ART.tile(g.id || 'all') + '</span><span class="cat-name">' + AC.esc(g.name) + '</span></a>';
+    }).join('') + '<a class="cat cat--out" href="bulk.html"><span class="cat-img">' + window.AC_ART.tile('bulk') + '</span><span class="cat-name">Bulk orders ' + ARROW + '</span></a>';
 
     var kinds = D.kinds.filter(function (k) { return k.group === st.group; });
     $('#kindChips').hidden = !st.group || kinds.length < 2;
@@ -31,6 +35,7 @@
     if (st.group && p.kindObj.group !== st.group) return false;
     if (st.kind && p.kind !== st.kind) return false;
     if (st.scent && p.fragrance !== st.scent) return false;
+    if (st.badge && p.badge !== st.badge) return false;
     if (st.q) {
       var hay = (p.name + ' ' + p.kindObj.name + ' ' + p.frag.name + ' ' + (p.tagline || '') + ' ' + (p.description || '')).toLowerCase();
       return st.q.toLowerCase().split(/\s+/).every(function (w) { return hay.indexOf(w) > -1; });
@@ -38,14 +43,23 @@
     return true;
   }
 
+  var GROUP_COPY = {
+    hair: 'Everyday shampoos and conditioners, in four fragrances.',
+    body: 'Shower gel, body lotion and bubble bath for everyday freshness. Pick a fragrance and make daily care something to look forward to.',
+    hands: 'Hand wash in an easy pump bottle, for kitchens, bathrooms and entryways.',
+    home: 'Room fragrance to freshen the spaces you live in.'
+  };
   function title() {
-    var k = AC.find(D.kinds, st.kind), g = AC.find(D.groups, st.group), f = AC.find(D.fragrances, st.scent), t, lead;
-    if (st.q) { t = 'Results for “' + st.q + '”'; lead = 'Showing products that match your search.'; }
-    else if (k) { t = k.name + (f ? ' · ' + f.name : ''); lead = 'Our ' + k.name.toLowerCase() + ' range, in every fragrance.'; }
-    else if (f) { t = (g ? g.name + ' · ' : '') + f.name; lead = f.note + '. ' + (g ? g.name + ' products' : 'Every product') + ' in this fragrance.'; }
-    else if (g) { t = g.name; lead = 'Everyday essentials for ' + g.name.toLowerCase() + '.'; }
-    else { t = 'All products'; lead = 'Gentle everyday care for hair, body, hands and home.'; }
-    $('#shopTitle').textContent = t; $('#shopLead').textContent = lead;
+    var k = AC.find(D.kinds, st.kind), g = AC.find(D.groups, st.group), f = AC.find(D.fragrances, st.scent), t, paras;
+    if (st.q) { t = 'Results for “' + st.q + '”'; paras = ['Showing products that match your search.']; }
+    else if (st.badge) { t = (g ? g.name + ' · ' : '') + (st.badge === 'New' ? 'New in' : 'Bestsellers'); paras = ['Our ' + (st.badge === 'New' ? 'newest' : 'most-loved') + ' products' + (g ? ' for ' + g.name.toLowerCase() : '') + '.']; }
+    else if (k) { t = k.name + (f ? ' · ' + f.name : ''); paras = ['Our ' + k.name.toLowerCase() + ' range, in every fragrance.']; }
+    else if (f) { t = (g ? g.name + ' · ' : '') + f.name; paras = [f.note + '. ' + (g ? g.name + ' products' : 'Every product') + ' in this fragrance.']; }
+    else if (g) { t = g.name; paras = [GROUP_COPY[g.id]]; }
+    else { t = 'All products'; paras = ['Gentle everyday care for hair, body, hands and home. Choose by type or by fragrance, from shampoo and shower gel to hand wash and room spray.']; }
+    if (!st.q) paras.push('Buying for a hotel, spa or business? We supply our range in 5 L cans. <a href="bulk.html">Request a quote</a>.');
+    $('#shopTitle').textContent = t;
+    $('#shopLead').innerHTML = paras.map(function (x) { return '<p>' + (x.indexOf('<a') > -1 ? x : AC.esc(x)) + '</p>'; }).join('');
     $('#crumbNow').textContent = t; document.title = t + ' — Audrey Care';
   }
 
@@ -68,15 +82,16 @@
     AC.reveal($('#grid'));
 
     var p = new URLSearchParams();
-    ['group', 'kind', 'scent', 'q'].forEach(function (k) { if (st[k]) p.set(k, st[k]); });
+    ['group', 'kind', 'scent', 'q', 'badge'].forEach(function (k) { if (st[k]) p.set(k, st[k]); });
     if (st.sort !== 'featured') p.set('sort', st.sort);
     history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : ''));
   }
 
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-group],[data-kind],[data-scent],[data-reset]'); if (!b) return;
-    if (b.hasAttribute('data-reset')) { st.group = st.kind = st.scent = st.q = ''; }
-    else if (b.hasAttribute('data-group')) { st.group = b.getAttribute('data-group'); st.kind = ''; }
+    e.preventDefault();
+    if (b.hasAttribute('data-reset')) { st.group = st.kind = st.scent = st.q = st.badge = ''; }
+    else if (b.hasAttribute('data-group')) { st.group = b.getAttribute('data-group'); st.kind = ''; st.badge = ''; }
     else if (b.hasAttribute('data-kind')) st.kind = b.getAttribute('data-kind');
     else if (b.hasAttribute('data-scent')) st.scent = b.getAttribute('data-scent');
     render();
