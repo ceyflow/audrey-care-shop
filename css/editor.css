@@ -28,3 +28,17 @@ html.cms-editing body { padding-bottom: 96px; }
 #ac-pop button:hover { background: #f2f9f4; }
 
 @media (max-width: 640px) { #ac-editor .ed-page { width: 100%; } #ac-editor .ed-hint { display: none; } }
+
+html.cms-editing .cms-sel { outline: 3px solid #ab8457 !important; outline-offset: 2px; }
+#ac-style { position: fixed; z-index: 100001; width: 270px; background: #fff; color: #14231b; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, .3); padding: 10px 12px 12px; display: grid; gap: 8px; font: 14px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+#ac-style[hidden] { display: none; }
+#ac-style .st-head { display: flex; justify-content: space-between; align-items: center; }
+#ac-style .st-head button { background: none; border: 0; font-size: 22px; line-height: 1; cursor: pointer; color: #666; padding: 0 4px; }
+#ac-style .st-row { display: grid; grid-template-columns: 96px 54px 1fr; align-items: center; gap: 8px; margin: 0; }
+#ac-style .st-area { grid-template-columns: 96px 1fr 1fr; }
+#ac-style input[type=color] { width: 54px; height: 34px; padding: 0; border: 1px solid #cdd5d1; border-radius: 6px; background: #fff; cursor: pointer; }
+#ac-style button { border: 1px solid #dedede; background: #fff; border-radius: 6px; padding: 6px 8px; font: inherit; cursor: pointer; color: inherit; }
+#ac-style button:hover:not(:disabled) { background: #f2f9f4; }
+#ac-style button:disabled { opacity: .4; cursor: default; }
+#ac-style button[hidden] { display: none; }
+#ac-style .st-hint { margin: 0; font-size: 12.5px; color: #666; line-height: 1.4; }

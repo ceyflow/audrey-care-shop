@@ -78,7 +78,7 @@
     el.removeAttribute('contenteditable');
     var html = CT.clean(el.innerHTML), now = CT.norm(html);
     el.innerHTML = html;
-    if (now === startHtml) { say(''); return; }
+    if (now === startHtml) { if (status.textContent === 'Editing…') say(''); return; }
     var key = CT.txKey(startKey), prev = startHtml, orig = startKey, revert = now === orig;
     if (!now) { el.innerHTML = prev; say('A text can’t be empty — use Reset instead.', 'err'); return; }
     say('Saving…');
@@ -134,22 +134,92 @@
     inp.click();
   }
 
+  /* ---------- colours of one place ---------- */
+  var st = document.createElement('div'); st.id = 'ac-style'; st.hidden = true;
+  st.innerHTML = '<div class="st-head"><b id="stName">Colours</b><button type="button" data-st="x" aria-label="Close">×</button></div>' +
+    '<label class="st-row"><span>Text colour</span><input type="color" id="stText"><button type="button" data-st="clr-c">Clear</button></label>' +
+    '<label class="st-row"><span>Background</span><input type="color" id="stBg"><button type="button" data-st="clr-b">Clear</button></label>' +
+    '<div class="st-row st-area"><span>Area</span><button type="button" data-st="up">↑ Bigger</button><button type="button" data-st="down">↓ Smaller</button></div>' +
+    '<p class="st-hint">Changes only this one place. Use <b>Bigger</b> to colour the whole box around it.</p>';
+  document.body.appendChild(st);
+  var stTarget = null, stStack = [], stPending = null, stText = st.querySelector('#stText'), stBg = st.querySelector('#stBg');
+
+  function hexOf(c) {
+    var m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(c);
+    if (!m || (m[4] !== undefined && Number(m[4]) === 0)) return null;
+    return '#' + [1, 2, 3].map(function (i) { return ('0' + Number(m[i]).toString(16)).slice(-2); }).join('');
+  }
+  function nameOf(t) {
+    var tag = t.tagName;
+    if (t.classList.contains('btn') || tag === 'BUTTON') return 'Button';
+    if (/^H[1-6]$/.test(tag)) return 'Heading';
+    if (/^(P|SPAN|A|LI|LABEL|EM|STRONG|SMALL|CITE|BLOCKQUOTE|DT|DD)$/.test(tag)) return 'Text';
+    if (tag === 'SECTION' || tag === 'ARTICLE') return 'Section';
+    return 'Box';
+  }
+  function fillStyle() {
+    var t = stTarget, own = CT.styleOf(t) || {}, cs = getComputedStyle(t);
+    st.querySelector('#stName').textContent = nameOf(t) + ' colours';
+    stText.value = own.c || hexOf(cs.color) || '#000000';
+    stBg.value = own.b || hexOf(cs.backgroundColor) || '#ffffff';
+    st.querySelector('[data-st="clr-c"]').hidden = !own.c;
+    st.querySelector('[data-st="clr-b"]').hidden = !own.b;
+    st.querySelector('[data-st="up"]').disabled = !canGoUp(t);
+    st.querySelector('[data-st="down"]').disabled = !stStack.length;
+  }
+  function canGoUp(t) { var p = t.parentElement; return !!p && p !== document.body && p.tagName !== 'MAIN' && p !== document.documentElement; }
+  function pickTarget(t) {
+    if (stTarget) stTarget.classList.remove('cms-sel');
+    stTarget = t; t.classList.add('cms-sel'); fillStyle();
+  }
+  function showStyle(t, e) {
+    if (!t || t === document.body || t.closest('#ac-editor, #ac-pop, #ac-style, [data-nocms]')) return;
+    stStack = []; stPending = null; pickTarget(t);
+    st.hidden = false;
+    var x = e ? e.clientX : 40, y = e ? e.clientY : 40, w = st.offsetWidth, h = st.offsetHeight;
+    var top = y + 18; if (top + h > innerHeight - 110) top = Math.max(8, y - h - 14);
+    st.style.left = Math.max(8, Math.min(innerWidth - w - 8, x - 30)) + 'px'; st.style.top = top + 'px';
+  }
+  function persistStyle() {
+    if (!stPending) return;
+    var out = stPending; stPending = null; say('Saving…');
+    CMS.saveContent(out.set, out.remove).then(function () { say('Saved', 'ok'); }).catch(function (err) { say('Could not save: ' + err.message, 'err'); });
+  }
+  function closeStyle() {
+    persistStyle();
+    if (stTarget) stTarget.classList.remove('cms-sel');
+    stTarget = null; stStack = []; st.hidden = true;
+  }
+  stText.addEventListener('input', function () { stPending = CT.setStyle(stTarget, { c: stText.value }); st.querySelector('[data-st="clr-c"]').hidden = false; });
+  stBg.addEventListener('input', function () { stPending = CT.setStyle(stTarget, { b: stBg.value }); st.querySelector('[data-st="clr-b"]').hidden = false; });
+  stText.addEventListener('change', persistStyle); stBg.addEventListener('change', persistStyle);
+  st.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-st]'); if (!b) return;
+    var a = b.getAttribute('data-st');
+    if (a === 'x') closeStyle();
+    else if (a === 'clr-c' || a === 'clr-b') { stPending = CT.setStyle(stTarget, a === 'clr-c' ? { c: null } : { b: null }); persistStyle(); fillStyle(); }
+    else if (a === 'up' && canGoUp(stTarget)) { stStack.push(stTarget); pickTarget(stTarget.parentElement); }
+    else if (a === 'down' && stStack.length) pickTarget(stStack.pop());
+  });
+
   /* ---------- clicks ---------- */
   document.addEventListener('click', function (e) {
     if (allow || e.target.closest('#ac-editor')) return;
-    if (e.target.closest('#ac-pop')) return;
-    closePop();
+    if (e.target.closest('#ac-pop, #ac-style')) return;
+    closePop(); closeStyle();
     if (current && e.target !== current && e.target.contains(current)) { e.preventDefault(); e.stopPropagation(); return; }   /* a button around the text being edited */
     var live = e.target.closest('[contenteditable="true"]');
     if (live) { if (live.closest('button, a, summary')) { e.preventDefault(); e.stopPropagation(); } return; }
     var text = e.target.closest('[data-cms-edit]');
-    if (text) { e.preventDefault(); e.stopPropagation(); begin(text, e); return; }
+    if (text) { e.preventDefault(); e.stopPropagation(); begin(text, e); showStyle(text.tagName === 'CMS-W' ? text.parentElement : text, e); return; }
     var btn = e.target.closest('button, summary');                     /* edge of a button: edit its label instead of pressing it */
     var label = btn && btn.querySelector('[data-cms-edit]');
-    if (label) { e.preventDefault(); e.stopPropagation(); begin(label, e); return; }
+    if (label) { e.preventDefault(); e.stopPropagation(); begin(label, e); showStyle(btn, e); return; }
     var slot = e.target.closest('[data-slot]');
     if (slot && !e.target.closest('button')) { e.preventDefault(); e.stopPropagation(); commit(); slotChoices(slot, e.clientX, e.clientY); return; }
-    if (e.target.closest('a[href]')) { e.preventDefault(); e.stopPropagation(); }
+    var link = e.target.closest('a[href]');
+    if (link) { e.preventDefault(); e.stopPropagation(); showStyle(link, e); return; }
+    if (!e.target.closest('button, input, select, textarea, summary, label')) showStyle(e.target, e);   /* blank space: colour that box */
   }, true);
   document.addEventListener('submit', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
   window.addEventListener('beforeunload', commit);
