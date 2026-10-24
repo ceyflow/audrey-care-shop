@@ -38,7 +38,8 @@ try everything; demo changes only exist in your own browser).
 | **Change any wording** on any page, down to a button label or a footer line | **Edit pages** → pick the page → *click the text and type*. Press Enter to save. |
 | **Replace any picture** (hero slides, banner, tiles, story page) or the **logo** | **Edit pages**: click the picture. Or **Photos & logo** to see every picture slot in one place. |
 | **Add or change products**, sizes, prices, “was” prices, stock, photos, labels (New / Bestseller) | **Products** (turn a product off to hide it; ▲▼ changes the order) |
-| **Change colours** (main colour, accent, text, backgrounds) | **Colours** |
+| **Change colours for the whole shop** (main colour, accent, text, soft backgrounds) | **Colours** |
+| **Colour one button, heading or box** (text colour and background) | **Edit pages** → click it → the small colour panel appears. **↑ Bigger** selects the box around it. Header and footer colours apply on every page; other colours only on that page. |
 | **Phone, WhatsApp, email, address**, delivery charge, free-delivery amount, which payment methods to offer, **bank details** | **Settings** |
 | **See and manage orders**: mark confirmed / packed / dispatched, add courier + tracking number (customers see it), open bank-transfer slips, message the customer on WhatsApp, download a CSV | **Orders** |
 | **Read bulk enquiries, contact messages and newsletter sign-ups**; mark done; download a CSV | **Messages** |
@@ -48,7 +49,7 @@ Good to know:
 
 - Changing a wording changes it **everywhere that exact wording appears** (e.g. a button used on several pages).
 - Put `*stars*` around words to make them the soft italic accent (in the dashboard list), or use the **Accent** button while editing on the page.
-- Product names, prices and descriptions are edited under **Products**, not on the page.
+- Product names, prices and descriptions are edited under **Products**, not on the page (and have no colour panel).
 - Pictures are shrunk automatically before upload, so the shop stays fast.
 - Not editable from the dashboard (ask a developer): the list of product **types** and **fragrances**, page titles
   shown in the browser tab, hidden labels for screen readers, and short pop-up messages (like form errors).

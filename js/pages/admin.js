@@ -502,6 +502,11 @@
       var edits = CMS.textEdits(S.kv);
       main.innerHTML = demoBanner() + head('Edit pages', 'Open any page and change it right there — click a text to retype it, click a picture to replace it. Changes save as you go.') +
         '<div class="ad-card"><h3>Pick a page</h3><p class="hint">Words you change are updated everywhere that exact wording appears (for example a button name used on several pages).</p>' + pageGrid() + '</div>' +
+        (function () {
+          var n = Object.keys(S.kv).filter(function (k) { return k.indexOf('sty.') === 0; }).length;
+          return '<div class="ad-card"><h3>Colours changed on pages (' + n + ')</h3><p class="hint">Click any text, button or box while editing a page and a small colour panel appears. Use <b>Bigger</b> in that panel to colour the whole box around it. For colours across the whole shop, use the <a href="#design">Colours</a> page.</p>' +
+            (n ? '<button class="ad-btn ad-btn--ghost ad-btn--sm" data-act="sty-reset">Put all page colours back to normal</button>' : '<p class="ad-empty" style="padding:6px 0 0;text-align:left">Nothing changed yet.</p>') + '</div>';
+        })() +
         '<div class="ad-card"><h3>Texts you have changed (' + edits.length + ')</h3><p class="hint">Edit or undo any change here. Put *stars* around words to make them the soft italic accent, like *softer*.</p>' +
         (edits.length ? '<div class="ad-texts">' + edits.map(function (t, i) {
           var ok = simpleHtml(t.now);
@@ -546,7 +551,7 @@
   var COLORS = [['brand', 'Main colour', 'Header, buttons, headings', '#143d2c'], ['gold', 'Accent colour', 'Small highlights and the soft italic words', '#ab8457'], ['text', 'Text colour', 'Body text', '#3b3b3b'], ['soft', 'Soft background', 'Grey panels and cards', '#f6f6f6']];
   VIEWS.design = function () {
     function cur(c) { return S.kv['theme.' + c[0]] || c[3]; }
-    main.innerHTML = demoBanner() + head('Colours', 'Change the shop’s colours. Related shades (hover colours, soft tints) follow your main colour automatically.') +
+    main.innerHTML = demoBanner() + head('Colours', 'Change the shop’s main colours everywhere at once. Related shades (hover colours, soft tints) follow your main colour automatically. To colour just one button, heading or box, open <a href="#pages">Edit pages</a> and click it.') +
       '<div class="ad-card"><form id="colorForm"><div class="ad-colors">' + COLORS.map(function (c) {
         return '<label class="ad-color"><input type="color" name="' + c[0] + '" value="' + esc(cur(c)) + '"><span><b>' + c[1] + '</b><span>' + c[2] + '</span></span></label>';
       }).join('') + '</div>' +
@@ -676,6 +681,11 @@
     'slot-clear': function (b) {
       var name = b.closest('.ad-slot').getAttribute('data-slot'), s = SLOTS.filter(function (x) { return x[0] === name; })[0];
       saveKv({}, ['img.' + name]).then(function () { $('.ad-slot[data-slot="' + name + '"]').outerHTML = slotCard(s); toast('Using the built-in picture'); }).catch(fail);
+    },
+    'sty-reset': function (b) {
+      if (!window.confirm('Put every colour you changed on the pages back to normal?')) return;
+      var keys = Object.keys(S.kv).filter(function (k) { return k.indexOf('sty.') === 0; });
+      busy(b, saveKv({}, keys)).then(function () { toast('Page colours reset'); VIEWS.pages(); }).catch(fail);
     },
     'colors-reset': function () { saveKv({}, COLORS.map(function (c) { return 'theme.' + c[0]; })).then(function () { toast('Colours reset'); VIEWS.design(); }).catch(fail); },
     'msg-type': function (b) { S.ui.msgType = b.getAttribute('data-v'); renderMessages(); },

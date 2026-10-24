@@ -9,7 +9,8 @@
  *     img.<slot>       photo URL        (img.logo, img.hero1, img.banner, img.tiles.hair ...)
  *     contact.<field>  phone | whatsapp | email | address
  *     site.name        shop name
- *     theme.<name>     brand | gold | text | soft  (colours)
+ *     theme.<name>     brand | gold | text | soft  (colours for the whole shop)
+ *     sty.<hash>       {"p": page|"*", "s": CSS path, "c": text colour, "b": background}   colours of one place
  */
 (function () {
   var C = window.AC_CONFIG;
@@ -28,7 +29,7 @@
   CT.load = function () { var c = readCache(); return c ? c.kv : {}; };
 
   /* ---------- tiny helpers ---------- */
-  var OK_INLINE = { A: 1, B: 1, STRONG: 1, EM: 1, I: 1, U: 1, BR: 1, SPAN: 1, SMALL: 1 };
+  var OK_INLINE = { A: 1, B: 1, STRONG: 1, EM: 1, I: 1, U: 1, BR: 1, SPAN: 1, SMALL: 1, 'CMS-W': 1 };
   var SKIP = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, SVG: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1, CODE: 1, PRE: 1, TEMPLATE: 1, IFRAME: 1, CANVAS: 1, OUTPUT: 1, IMG: 1 };
   CT.norm = function (html) { return String(html).replace(/\s+/g, ' ').trim(); };
   var textHolder = document.createElement('div');
@@ -81,7 +82,58 @@
       try { var o = JSON.parse(kv[k]); if (o && typeof o.o === 'string' && typeof o.n === 'string') tx[o.o] = o.n; } catch (e) { /* ignore a bad row */ }
     }
     CT.tx = tx; CT.hasTx = Object.keys(tx).length > 0;
+    var sty = {};
+    for (var q in kv) {
+      if (q.indexOf('sty.') !== 0) continue;
+      try { var e = JSON.parse(kv[q]); if (validStyle(e)) sty[q] = e; } catch (err) { /* ignore a bad row */ }
+    }
+    CT.stySet = sty;
   }
+
+  /* ---------- colours of one place on a page ---------- */
+  CT.page = location.pathname.split('/').pop() || 'index.html';
+  var HEX = /^#[0-9a-f]{6}$/i, SAFE_SEL = /^[\w#\s>:()\\-]+$/;
+  function validStyle(e) { return e && typeof e.p === 'string' && typeof e.s === 'string' && SAFE_SEL.test(e.s) && (!e.c || HEX.test(e.c)) && (!e.b || HEX.test(e.b)) && (e.c || e.b); }
+  CT.styleKey = function (p, s) { return 'sty.' + hash(p + '|' + s); };
+  /* a short, stable CSS path to an element, e.g.  #hero > article:nth-of-type(1) > div:nth-of-type(2) */
+  CT.selectorOf = function (el) {
+    var parts = [];
+    while (el && el.nodeType === 1 && el !== document.body) {
+      if (el.id && !/^(ac-|\d)/.test(el.id)) { parts.unshift('#' + (window.CSS && CSS.escape ? CSS.escape(el.id) : el.id)); return parts.join(' > '); }
+      var i = 1, sib = el;
+      while ((sib = sib.previousElementSibling)) if (sib.tagName === el.tagName) i++;
+      parts.unshift(el.tagName.toLowerCase() + ':nth-of-type(' + i + ')');
+      el = el.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  };
+  CT.pageOf = function (el) { return el.closest('#siteHeader, #mnav, #mega, #drawer, .footer, .scrim') ? '*' : CT.page; };
+  CT.styleOf = function (el) { return CT.stySet[CT.styleKey(CT.pageOf(el), CT.selectorOf(el))] || null; };
+  CT.renderStyles = function () {
+    var css = '';
+    for (var k in CT.stySet) {
+      var e = CT.stySet[k];
+      if (e.p !== CT.page && e.p !== '*') continue;
+      var sel = e.s + (e.h ? ':not(:hover)' : '');       /* buttons keep their own hover look */
+      if (e.c) css += sel + ',' + sel + ' *{color:' + e.c + ' !important}';
+      if (e.b) css += sel + '{background-color:' + e.b + ' !important}';
+    }
+    var node = document.getElementById('ac-sty');
+    if (!css) { if (node) node.parentNode.removeChild(node); return; }
+    if (!node) { node = document.createElement('style'); node.id = 'ac-sty'; (document.head || document.documentElement).appendChild(node); }
+    node.textContent = css;
+  };
+  /* patch: { c: '#hex'|null, b: '#hex'|null }. Returns { set, remove } rows for saving. */
+  CT.setStyle = function (el, patch) {
+    var s = CT.selectorOf(el), p = CT.pageOf(el), key = CT.styleKey(p, s);
+    var cur = CT.stySet[key] || { p: p, s: s, h: (/^(A|BUTTON)$/.test(el.tagName) || el.classList.contains('btn')) ? 1 : 0 };
+    ['c', 'b'].forEach(function (f) { if (f in patch) { if (patch[f]) cur[f] = patch[f]; else delete cur[f]; } });
+    var out = { set: {}, remove: [] };
+    if (!cur.c && !cur.b) { delete CT.stySet[key]; delete CT.kv[key]; out.remove.push(key); }
+    else { CT.stySet[key] = cur; CT.kv[key] = JSON.stringify(cur); out.set[key] = CT.kv[key]; }
+    CT.renderStyles();
+    return out;
+  };
 
   function mix(hex, to, t) {
     var m = /^#?([0-9a-f]{6})$/i.exec(hex); if (!m) return hex;
@@ -138,7 +190,7 @@
     var memo = new Map(), out = [];
     (function visit(el) {
       var tag = el.tagName.toUpperCase();
-      if (SKIP[tag] || el.hasAttribute('data-nocms') || el.getAttribute('contenteditable') === 'true' || el.classList.contains('hp') || el.closest('#ac-editor, #ac-pop')) return;
+      if (SKIP[tag] || el.hasAttribute('data-nocms') || el.getAttribute('contenteditable') === 'true' || el.classList.contains('hp') || el.closest('#ac-editor, #ac-pop, #ac-style')) return;
       if (allKidsInline(el, memo)) {
         var u = el;
         while (u.childNodes.length === 1 && u.firstChild.nodeType === 1 && isInline(u.firstChild, memo)) u = u.firstChild;
@@ -157,7 +209,7 @@
   };
 
   function wrap(node) {
-    var s = document.createElement('span');
+    var s = document.createElement('cms-w');
     s.setAttribute('data-cms-wrap', '');
     node.parentNode.replaceChild(s, node);
     s.textContent = node.data;
@@ -187,7 +239,7 @@
       if (CT.editing && u.t === 'n') {                       /* editing needs a real element to click on */
         var s = wrap(u.node); u = { t: 'e', el: s, key: u.key, applied: false };
       } else if (CT.editing && /^(BUTTON|SUMMARY)$/.test(u.el.tagName)) {   /* keep buttons themselves out of the editable part */
-        var inner = document.createElement('span'); inner.setAttribute('data-cms-wrap', '');
+        var inner = document.createElement('cms-w'); inner.setAttribute('data-cms-wrap', '');
         while (u.el.firstChild) inner.appendChild(u.el.firstChild);
         u.el.appendChild(inner); u = { t: 'e', el: inner, key: u.key, applied: false };
       }
@@ -199,6 +251,7 @@
   /* ---------- go ---------- */
   function start(kv) {
     CT.kv = kv; derive(kv); configure(kv); theme(kv);
+    if (!CT.disabled) CT.renderStyles();
   }
   var cached = readCache();
   start(cached ? cached.kv : {});
@@ -216,7 +269,7 @@
       muts.forEach(function (m) {
         Array.prototype.forEach.call(m.addedNodes, function (n) {
           var el = n.nodeType === 1 ? n : n.nodeType === 3 ? n.parentElement : null;
-          if (el && !el.closest('#ac-editor, #ac-pop')) queue.add(el);
+          if (el && !el.closest('#ac-editor, #ac-pop, #ac-style')) queue.add(el);
         });
       });
       if (queue.size && !raf) raf = requestAnimationFrame(flush);
